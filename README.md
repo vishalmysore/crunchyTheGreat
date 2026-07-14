@@ -9,6 +9,12 @@ Unlike LLM summarizers, the core pipeline is **deterministic** — same input,
 same output, no model required. An LLM pass (WebLLM, Ollama, OpenAI, Claude)
 is an optional layer on top.
 
+> **Two implementations in this repo:**
+> - **Java** (root, `crunchy-*` modules) — the reference implementation, JDK 17+/Maven.
+> - **TypeScript** ([`web/`](web/)) — a zero-dependency browser + Node port with the
+>   same pipeline, CIR schema and tests. **Live demo:**
+>   https://vishalmysore.github.io/crunchyTheGreat/
+
 ## How it works
 
 ```

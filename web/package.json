@@ -1,0 +1,21 @@
+{
+  "name": "crunchythegreat",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Deterministic Jira context-compression engine (browser + CLI)",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "cli": "tsx src/cli.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11",
+    "vitest": "^2.1.5"
+  }
+}

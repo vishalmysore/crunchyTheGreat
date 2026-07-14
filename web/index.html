@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CrunchyTheGreat — Jira context compression</title>
+  </head>
+  <body>
+    <div id="app">
+      <header class="masthead">
+        <h1>Crunchy<span class="accent">The</span>Great</h1>
+        <p class="tagline">
+          Deterministic Jira context compression for AI coding agents. Runs
+          entirely in your browser — no server, no upload, no LLM.
+        </p>
+      </header>
+
+      <section class="controls">
+        <label>
+          Source
+          <select id="source">
+            <option value="jira">Jira issue JSON</option>
+            <option value="text">Plain text</option>
+          </select>
+        </label>
+        <label>
+          Level
+          <select id="level">
+            <option value="full">Full</option>
+            <option value="medium">Medium</option>
+            <option value="small">Small</option>
+            <option value="tiny">Tiny</option>
+          </select>
+        </label>
+        <label>
+          Format
+          <select id="format">
+            <option value="markdown">Markdown</option>
+            <option value="json">JSON (CIR)</option>
+          </select>
+        </label>
+        <div class="spacer"></div>
+        <button id="sample" class="ghost" type="button">Load sample</button>
+        <button id="compress" class="primary" type="button">Compress ▸</button>
+      </section>
+
+      <section class="panes">
+        <div class="pane">
+          <div class="pane-head">
+            <span>Input</span>
+            <span id="input-size" class="muted"></span>
+          </div>
+          <textarea
+            id="input"
+            spellcheck="false"
+            placeholder="Paste a Jira REST issue export (GET /rest/api/2/issue/{key}?expand=renderedFields,comments), or switch Source to Plain text and paste anything. Click “Load sample” to try it."
+          ></textarea>
+        </div>
+
+        <div class="pane">
+          <div class="pane-head">
+            <span>Compressed context</span>
+            <button id="copy" class="ghost small" type="button" hidden>Copy</button>
+          </div>
+          <div id="stats" class="stats" hidden></div>
+          <pre id="output" class="output muted">Output will appear here.</pre>
+        </div>
+      </section>
+
+      <footer class="foot">
+        <span
+          >CIR = Context Intermediate Representation, a source-agnostic JSON
+          contract any agent can consume.</span
+        >
+        <a href="https://github.com/vishalmysore/crunchyTheGreat" target="_blank" rel="noopener"
+          >Source on GitHub</a
+        >
+      </footer>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
