@@ -117,6 +117,44 @@ and long duplicate threads common in real Jira compress considerably harder.
 Both implementations are byte-identical: the Java CLI and the TypeScript CLI
 emit the same Markdown for every sample at every level.
 
+## Try it on a real public Jira
+
+Several open-source projects run Jira with **anonymous REST access**, so you can
+compress a real ticket without credentials:
+
+| Instance | Example |
+| --- | --- |
+| Apache (Kafka, Spark, Lucene…) | `https://issues.apache.org/jira/rest/api/2/issue/LUCENE-9004` |
+| Jenkins | `https://issues.jenkins.io/rest/api/2/issue/JENKINS-70000` |
+| MongoDB | `https://jira.mongodb.org/rest/api/2/issue/SERVER-70000` |
+
+```bash
+curl -s "https://issues.apache.org/jira/rest/api/2/issue/LUCENE-9004" -o ticket.json
+npx tsx src/cli.ts -i ticket.json -f markdown -l full   # from web/
+```
+
+Then paste that JSON into the [web app](https://vishalmysore.github.io/crunchyTheGreat/).
+The app cannot fetch these URLs for you: none of these hosts send
+`Access-Control-Allow-Origin`, so a browser blocks the request. Fetch it
+yourself and paste.
+
+**Real tickets are where the compression earns its keep** — they carry the long
+duplicate threads and log dumps the bundled samples lack:
+
+| Ticket | Comments | Raw text | Reduction (full) |
+| --- | --- | --- | --- |
+| `SPARK-40588` | 8 | 5.7 KB | **91%** |
+| `KAFKA-9366` | 33 | 11.5 KB | **87%** |
+| `LUCENE-9004` | 68 | 64.6 KB | **88%** |
+
+**Known gap, honestly:** the *ratio* holds on real tickets, but *extraction
+quality* does not transfer as well. Apache tickets rarely contain an
+"Acceptance Criteria" heading or a "let's use X" decision sentence, so on the
+three above the extractor finds 0–1 decisions and no acceptance criteria, while
+`constraints` fills up with any sentence containing "should". The heuristics are
+tuned to tickets written like the bundled samples. Broadening them for
+real-world phrasing is the most valuable next contribution.
+
 ## Extending
 
 - **New source**: implement a parser that returns `NormalizedDocument`
