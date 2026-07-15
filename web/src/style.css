@@ -44,13 +44,24 @@ body {
   padding: 2rem 1.25rem 3rem;
 }
 
-.masthead h1 {
-  margin: 0;
-  font-size: 2rem;
-  letter-spacing: -0.02em;
+.masthead h1.brand {
+  margin: 0 0 0.15rem;
+  line-height: 0;
 }
-.masthead .accent {
-  color: var(--accent);
+/* The logo is a JPEG with a baked-in white background, so rather than let it
+   sit as a bright slab in dark mode, it gets an explicit white card. */
+.masthead h1.brand img {
+  width: min(330px, 82%);
+  height: auto;
+  aspect-ratio: 1024 / 559;
+  border-radius: 12px;
+  background: #fff;
+  display: block;
+}
+@media (prefers-color-scheme: dark) {
+  .masthead h1.brand img {
+    box-shadow: 0 0 0 1px var(--border);
+  }
 }
 .tagline {
   margin: 0.35rem 0 0;

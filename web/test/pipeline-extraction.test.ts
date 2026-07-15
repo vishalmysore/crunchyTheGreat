@@ -51,6 +51,17 @@ describe('CompressionPipeline extraction', () => {
     expect(result.acceptanceCriteria).toEqual([]);
   });
 
+  it('does not mistake a CVE id for a related Jira issue', () => {
+    const doc = new NormalizedDocument();
+    doc.key = 'ABC-6';
+    doc.title = 'Bump dependency';
+    doc.description = 'Upgrade to pick up the fix for CVE-2019-12399. See also OTHER-42 for context.';
+
+    const result = run(doc);
+    expect(result.relatedIssues).toContain('OTHER-42');
+    expect(result.relatedIssues.some((k) => k.startsWith('CVE'))).toBe(false);
+  });
+
   it('collapses repeated comments into one decision', () => {
     const doc = new NormalizedDocument();
     doc.key = 'ABC-3';

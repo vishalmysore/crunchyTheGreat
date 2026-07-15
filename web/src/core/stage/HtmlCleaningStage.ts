@@ -15,6 +15,9 @@ const QUOTED_LINE = /^\s*>.*$/gm;
 const SIGNATURE = /^--\s*$[\s\S]*/m;
 const EXCESS_BLANK_LINES = /\n{3,}/g;
 const TRAILING_SPACES = /[ \t]+$/gm;
+// NBSP and friends. Jira content is full of U+00A0, and JS trim() strips it
+// while Java's strip() does not, so they must be normalised for parity.
+const UNICODE_SPACES = /[\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]/g;
 
 const NAMED_ENTITIES: Record<string, string> = {
   '&nbsp;': ' ',
@@ -51,7 +54,13 @@ function htmlToText(html: string): string {
 }
 
 export function clean(raw: string): string {
-  let text = raw;
+  // Normalise line endings and exotic spaces before anything else.
+  //
+  // Real Jira payloads carry CRLF and are littered with non-breaking spaces.
+  // Both matter for parity: JS trim() strips U+00A0 but Java's strip() does not
+  // (Character.isWhitespace excludes it), so an NBSP left in place makes the two
+  // implementations disagree. Normalising here fixes it once for everyone.
+  let text = raw.replace(/\r\n?/g, '\n').replace(UNICODE_SPACES, ' ');
   if (HTML_HINT.test(text)) {
     text = htmlToText(text);
   }

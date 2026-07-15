@@ -23,4 +23,12 @@ describe('HtmlCleaningStage', () => {
   it('passes plain text through unchanged', () => {
     expect(clean('Just plain text.')).toBe('Just plain text.');
   });
+
+  // Real Jira content is full of U+00A0. JS trim() strips it but Java's strip()
+  // does not, so leaving it in place silently forks the two implementations.
+  it('normalises non-breaking spaces and CRLF', () => {
+    const cleaned = clean('one file per partition. \r\n{code:java}');
+    expect(cleaned).toBe('one file per partition.\n{code:java}');
+    expect(cleaned).not.toMatch(/[ \r]/);
+  });
 });

@@ -1,3 +1,13 @@
+<p align="center">
+  <img src="logo.jpg" alt="CrunchyTheGreat — deterministic Jira context compression" width="520">
+</p>
+
+<p align="center">
+  <a href="https://vishalmysore.github.io/crunchyTheGreat/"><strong>Live demo</strong></a> ·
+  <a href="article.md">Article</a> ·
+  <a href="web/">TypeScript port</a>
+</p>
+
 # CrunchyTheGreat
 
 AI context compression engine for Jira. Reduces the text sent to coding agents

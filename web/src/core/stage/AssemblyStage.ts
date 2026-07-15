@@ -15,7 +15,10 @@ import { sentences } from '../text/TextUtil.js';
  * if its category weight clears the level's threshold. That is what makes
  * TINY genuinely smaller than FULL rather than merely differently reported.
  */
-const ISSUE_KEY = /\b([A-Z][A-Z0-9]{1,9}-\d+)\b/g;
+// The trailing (?!-) stops us matching a prefix of a longer identifier: real
+// Kafka tickets cite CVE-2019-12399, and without it we'd file "CVE-2019" as a
+// related Jira issue.
+const ISSUE_KEY = /\b([A-Z][A-Z0-9]{1,9}-\d+)\b(?!-)/g;
 const BUSINESS_GOAL_SENTENCE = /\b(so that|in order to|business goal|objective|the goal is)\b/i;
 
 const LISTS: CirListName[] = [

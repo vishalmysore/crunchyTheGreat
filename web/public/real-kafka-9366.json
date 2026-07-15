@@ -1,0 +1,329 @@
+{
+  "key": "KAFKA-9366",
+  "fields": {
+    "summary": "Upgrade log4j to log4j2",
+    "issuetype": {
+      "name": "Bug"
+    },
+    "status": {
+      "name": "Resolved"
+    },
+    "priority": {
+      "name": "Critical"
+    },
+    "assignee": {
+      "displayName": "TengYao Chi"
+    },
+    "labels": [
+      "needs-kip"
+    ],
+    "description": "h2. CVE-2019-17571 Detail\r\n\r\nIncluded in Log4j 1.2 is a SocketServer class that is vulnerable to deserialization of untrusted data which can be exploited to remotely execute arbitrary code when combined with a deserialization gadget when listening to untrusted network traffic for log data. This affects Log4j versions up to 1.2 up to 1.2.17.\r\n\r\n \r\n\r\n[https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-17571]\r\n\r\n ",
+    "issuelinks": [
+      {
+        "inwardIssue": {
+          "key": "KAFKA-10877"
+        }
+      },
+      {
+        "outwardIssue": {
+          "key": "KAFKA-17892"
+        }
+      },
+      {
+        "outwardIssue": {
+          "key": "KAFKA-18104"
+        }
+      },
+      {
+        "inwardIssue": {
+          "key": "KAFKA-13604"
+        }
+      },
+      {
+        "inwardIssue": {
+          "key": "KAFKA-13616"
+        }
+      },
+      {
+        "inwardIssue": {
+          "key": "KAFKA-13729"
+        }
+      },
+      {
+        "inwardIssue": {
+          "key": "KAFKA-13534"
+        }
+      },
+      {
+        "outwardIssue": {
+          "key": "KAFKA-16936"
+        }
+      },
+      {
+        "outwardIssue": {
+          "key": "KAFKA-13625"
+        }
+      },
+      {
+        "outwardIssue": {
+          "key": "KAFKA-17889"
+        }
+      },
+      {
+        "outwardIssue": {
+          "key": "KAFKA-17963"
+        }
+      },
+      {
+        "outwardIssue": {
+          "key": "KAFKA-17858"
+        }
+      },
+      {
+        "inwardIssue": {
+          "key": "KAFKA-13534"
+        }
+      },
+      {
+        "inwardIssue": {
+          "key": "KAFKA-12399"
+        }
+      }
+    ],
+    "comment": {
+      "comments": [
+        {
+          "author": {
+            "displayName": "ASF GitHub Bot"
+          },
+          "created": "2020-01-06T15:16:45.890+0000",
+          "body": "dongjinleekr commented on pull request #7898: KAFKA-9366: please consider upgrade log4j to log4j2 due to critical security problem CVE-2019-17571\nURL: https://github.com/apache/kafka/pull/7898\n \n \n   This PR changes log4j dependency into log4j2.\r\n   \r\n   log4j migrated into log4j2 after its last release of 1.2.17 (May 2012), which is affected by this problem. So, the only way to fix it is by moving log4j dependency into log4j2.\r\n   \r\n   The problem is: the API for setting log level dynamically is different between log4j and log4j2. So, this PR also updates how `Log4jController` works.\r\n   \r\n   This PR also fixes a potential problem in `Log4jController#getLogLevel` - what if the root logger's level is null? It may result in `NullPointerException`.\r\n   \r\n   ### Committer Checklist (excluded from commit message)\r\n   - [ ] Verify design and implementation \r\n   - [ ] Verify test coverage and CI build status\r\n   - [ ] Verify documentation (including upgrade notes)\r\n   \n \n----------------------------------------------------------------\nThis is an automated message from the Apache Git Service.\nTo respond to the message, please log on to GitHub and use the\nURL above to go to the specific comment.\n \nFor queries about this service, please contact Infrastructure at:\nusers@infra.apache.org\n"
+        },
+        {
+          "author": {
+            "displayName": "Konstantine Karantasis"
+          },
+          "created": "2021-07-14T21:50:32.875+0000",
+          "body": "This feature was not approved on time for 3.0. Pushing the target version to 3.1\r\n[|https://issues.apache.org/jira/secure/AddComment!default.jspa?id=13198668]"
+        },
+        {
+          "author": {
+            "displayName": "Dongjin Lee"
+          },
+          "created": "2021-07-15T02:20:52.266+0000",
+          "body": "[~kkonstantine] Got it."
+        },
+        {
+          "author": {
+            "displayName": "yale"
+          },
+          "created": "2021-09-01T12:10:52.892+0000",
+          "body": "May I kindly ask about the plan to upgrade log4j to version 2.x? I see that mentioned PR is still open. Any plans for releasing it in 3.1? \r\nThanks!"
+        },
+        {
+          "author": {
+            "displayName": "Ashish Patil"
+          },
+          "created": "2021-09-02T08:13:50.084+0000",
+          "body": "Hi Guys\r\n\r\nIs there any plan to fix this issue soon?\r\n\r\nThanks\r\n\r\nAshish"
+        },
+        {
+          "author": {
+            "displayName": "Dongjin Lee"
+          },
+          "created": "2021-09-06T01:56:39.744+0000",
+          "body": "ALL // Sorry for being late. This KIP was originally passed for AK 3.0 but dropped from the release for the lack of review. I think it will be included in 3.1.\r\n\r\nIf you need this feature urgently, please have a look at a custom build of 2.7.0 [here|http://home.apache.org/~dongjin/post/apache-kafka-log4j2-support/]. I could not complete it for 2.8.0 and 3.0 for my medical concerns but will resume the work now.\r\n\r\nIf you are using log4j-appender, please have a look at [KIP-719|https://cwiki.apache.org/confluence/display/KAFKA/KIP-719%3A+Add+Log4J2+Appender]. This KIP proposes a log4j2 equivalent for log4j-appender. I am also working on a custom release of it.\r\n\r\nThank you again for your interest in my workings."
+        },
+        {
+          "author": {
+            "displayName": "Ashish Patil"
+          },
+          "created": "2021-09-07T20:51:11.040+0000",
+          "body": "Thanks, [~dongjin]"
+        },
+        {
+          "author": {
+            "displayName": "David Jacot"
+          },
+          "created": "2021-11-02T12:57:03.122+0000",
+          "body": "Moved the target release to the next one as the PR was not approved in time for the feature freeze."
+        },
+        {
+          "author": {
+            "displayName": "Luke Chen"
+          },
+          "created": "2021-12-13T08:57:57.907+0000",
+          "body": "Please upgrade to Log4j to 2.15.0 or newer for CVE-2021-44228. Thanks."
+        },
+        {
+          "author": {
+            "displayName": "Dongjin Lee"
+          },
+          "created": "2021-12-16T02:54:57.536+0000",
+          "body": "[~showuon] Sure. The PR is now updated to handle log4j2 2.16.0."
+        },
+        {
+          "author": {
+            "displayName": "Tarun Goswami"
+          },
+          "created": "2021-12-16T04:27:42.289+0000",
+          "body": "What is the ETA for this issue resolution!"
+        },
+        {
+          "author": {
+            "displayName": "Dongjin Lee"
+          },
+          "created": "2021-12-18T08:04:04.692+0000",
+          "body": "[~tarungoswami] I can't give you any guarantee but, [here|http://home.apache.org/~dongjin/post/apache-kafka-log4j2-support/] is a preview based on Apache Kafka 3.0.0."
+        },
+        {
+          "author": {
+            "displayName": "ashok talari"
+          },
+          "created": "2022-01-03T14:19:27.541+0000",
+          "body": "Hi Dongjin Lee,\r\n\r\nCould you please let us know if any tentative dates for official release for latest log4j build."
+        },
+        {
+          "author": {
+            "displayName": "Dongjin Lee"
+          },
+          "created": "2022-01-04T03:34:30.402+0000",
+          "body": "[~Ashoking] No, I can't certain it. Please have a look on the preview based on 3.0.0."
+        },
+        {
+          "author": {
+            "displayName": "Warren Grunbok"
+          },
+          "created": "2022-01-18T18:33:15.026+0000",
+          "body": "I'm also looking for an official release date with the latest log4j.  Also, what version will you be upgrading to?  Thank you for your help in this matter."
+        },
+        {
+          "author": {
+            "displayName": "Fabrice Bauzac-Stehly"
+          },
+          "created": "2022-02-02T15:08:49.144+0000",
+          "body": "https://kafka.apache.org/cve-list claims to list all security\r\nvulnerabilities that are fixed in released versions of Apache Kafka.\r\nI understand this as \"all other vulnerabilities are potentially\r\nexploitable unless explicitly told otherwise\".  Here is the list as of\r\n2022-02-02 Wednesday:\r\n\r\n- CVE-2017-12610 Authenticated Kafka clients may impersonate other\r\n  users\r\n\r\n- CVE-2018-1288 Authenticated Kafka clients may interfere with data\r\n  replication\r\n\r\n- CVE-2018-17196 Authenticated clients with Write permission may\r\n  bypass transaction/idempotent ACL validation\r\n\r\n- CVE-2019-12399 Apache Kafka Connect REST API may expose plaintext\r\n  secrets in tasks endpoint\r\n\r\n- CVE-2021-4104 Flaw in Apache Log4j logging library in versions 1.x\r\n\r\n- CVE-2021-38153 Timing Attack Vulnerability for Apache Kafka Connect\r\n  and Clients\r\n\r\n- CVE-2021-44228 Flaw in Apache Log4j logging library in versions from\r\n  2.0.0 and before 2.15.0\r\n\r\n- CVE-2021-45046 Flaw in Apache Log4j logging library in versions from\r\n  2.0-beta9 through 2.12.1 and from 2.13.0 through 2.15.0\r\n\r\n- CVE-2022-23307 Deserialization of Untrusted Data Flaw in Apache\r\n  Log4j logging library in versions 1.x\r\n\r\nhttps://logging.apache.org/log4j/1.2/ lists several vulnerabilities\r\nthat affect log4j 1.x.  As of 2022-02-02 Wednesday:\r\n\r\n- CVE-2019-17571 is a high severity issue targeting the\r\n  SocketServer. Log4j includes a SocketServer that accepts serialized\r\n  log events and deserializes them without verifying whether the\r\n  objects are allowed or not. This can provide an attack vector that\r\n  can be expoited.\r\n  => NOT FIXED IN KAFKA?\r\n\r\n- CVE-2020-9488 is a moderate severity issue with the\r\n  SMTPAppender. Improper validation of certificate with host mismatch\r\n  in Apache Log4j SMTP appender. This could allow an SMTPS connection\r\n  to be intercepted by a man-in-the-middle attack which could leak any\r\n  log messages sent through that appender.\r\n  => NOT FIXED IN KAFKA?\r\n\r\n- CVE-2021-4104 is a high severity deserialization vulnerability in\r\n  JMSAppender. JMSAppender uses JNDI in an unprotected manner allowing\r\n  any application using the JMSAppender to be vulnerable if it is\r\n  configured to reference an untrusted site or if the site referenced\r\n  can be accesseed by the attacker. For example, the attacker can\r\n  cause remote code execution by manipulating the data in the LDAP\r\n  store.\r\n  => mitigated: one can remove JMSAppender from the log4j-1.2.17.jar\r\n  artifact.\r\n\r\n- CVE-2022-23302 is a high severity deserialization vulnerability in\r\n  JMSSink. JMSSink uses JNDI in an unprotected manner allowing any\r\n  application using the JMSSink to be vulnerable if it is configured\r\n  to reference an untrusted site or if the site referenced can be\r\n  accesseed by the attacker. For example, the attacker can cause\r\n  remote code execution by manipulating the data in the LDAP store.\r\n  => NOT FIXED IN KAFKA?\r\n\r\n- CVE-2022-23305 is a high serverity SQL injection flaw in\r\n  JDBCAppender that allows the data being logged to modify the\r\n  behavior of the component. By design, the JDBCAppender in Log4j\r\n  1.2.x accepts an SQL statement as a configuration parameter where\r\n  the values to be inserted are converters from PatternLayout. The\r\n  message converter, %m, is likely to always be included. This allows\r\n  attackers to manipulate the SQL by entering crafted strings into\r\n  input fields or headers of an application that are logged allowing\r\n  unintended SQL queries to be executed.\r\n  => NOT FIXED IN KAFKA?\r\n\r\n- CVE-2022-23307 is a critical severity against the chainsaw component\r\n  in Log4j 1.x. This is the same issue corrected in CVE-2020-9493\r\n  fixed in Chainsaw 2.1.0 but Chainsaw was included as part of Log4j\r\n  1.2.x.\r\n  => mitigated: one can remove Chainsaw from the log4j-1.2.17.jar\r\n  artifact.\r\n\r\nFrom all that, it looks like there is a number of still-open\r\nvulnerabilities in kafka induced by the use of log4j?  Can somebody\r\nconfirm?\r\n\r\nMay I suggest any interested reader to consider voting for this issue?"
+        },
+        {
+          "author": {
+            "displayName": "Dongjin Lee"
+          },
+          "created": "2022-02-03T09:29:38.417+0000",
+          "body": "Hi [~noonbs], this issue will be resolved with KAFKA-12399. I expect it will be done in 3.2.0."
+        },
+        {
+          "author": {
+            "displayName": "Indupriya"
+          },
+          "created": "2022-02-03T12:43:43.289+0000",
+          "body": "Hi [~dongjin] \r\n\r\nCould you please help me any approximate dates for official release for latest log4j build......? "
+        },
+        {
+          "author": {
+            "displayName": "Akansh Shandilya"
+          },
+          "created": "2022-02-09T20:15:18.320+0000",
+          "body": "Voting has been done by multiple users, and more are the requests for upgrading log4j.\r\n\r\n \r\n\r\nCan we set or request ETA for log4j upgrade to log4j2. Any other challenge in doing so.\r\n\r\n \r\n\r\n[https://logging.apache.org/log4j/1.2/download.html]\r\n\r\nLog4j 1.x was End-Of-Llife on August 5, 2015. Kafka and Log4j, both are connected to Apache. As a strong community we need to think :: Does Apache-Kafka require more than 6 years of time to upgrade a log4j library, which was declared End-of-Life by Apache-log4j in 2015.\r\n\r\n \r\n\r\n \r\n\r\n \r\n\r\n "
+        },
+        {
+          "author": {
+            "displayName": "Muthuveerappan"
+          },
+          "created": "2022-02-15T08:41:26.756+0000",
+          "body": " If this issue will be fixed in 3.2.0 ., what the ETA for 3.2.0"
+        },
+        {
+          "author": {
+            "displayName": "Ben Hines"
+          },
+          "created": "2022-02-15T09:01:12.823+0000",
+          "body": "Seems scheduled for April. \r\n\r\n[https://cwiki.apache.org/confluence/display/KAFKA/Release+Plan+3.2.0]\r\n\r\n \r\n\r\nEven though Kafka is not on 2.x, a lot of Corporate IT departments are looking un-kindly on applications using old Log4j. I would strongly suggest back porting the log4j fixes and doing a hotfix ASAP."
+        },
+        {
+          "author": {
+            "displayName": "Muthuveerappan"
+          },
+          "created": "2022-02-21T05:56:27.242+0000",
+          "body": "Thanks :)"
+        },
+        {
+          "author": {
+            "displayName": "Ron Craig"
+          },
+          "created": "2022-03-14T15:47:30.420+0000",
+          "body": "Hi, [~dongjin] please can you confirm that the latest available log4j2 will be used in the upgrade? Corporate needs us to eliminate anything before log4j2 2.17.2 as of this writing."
+        },
+        {
+          "author": {
+            "displayName": "Dongjin Lee"
+          },
+          "created": "2022-03-17T13:50:10.055+0000",
+          "body": "[~roncraig] Sorry for being late. the PR is now updated with log4j2 2.17.2."
+        },
+        {
+          "author": {
+            "displayName": "Ron Craig"
+          },
+          "created": "2022-03-17T15:48:20.550+0000",
+          "body": "Perfect!  Thanks, [~dongjin] ."
+        },
+        {
+          "author": {
+            "displayName": "Brandon Kimbrough"
+          },
+          "created": "2022-03-23T13:38:38.142+0000",
+          "body": "[~cadonna] did I really just see that you kicked this out of the 3.3.0 release?! We've all been waiting months for you all to patch the Log4J CVEs, how are you going to just boot it to some undetermined time in the future?! I think the world need this for at least 2 months ago!\r\n\r\n \r\n\r\nCC [~dongjin] "
+        },
+        {
+          "author": {
+            "displayName": "Luke Chen"
+          },
+          "created": "2022-03-24T02:07:18.298+0000",
+          "body": "[~brandonk]  and all, we are aware of the log4j CVE issue is impacting many users. Currently, we are discussing compatibility issue for the log4j2 upgrade, and is considering to temporarily replace log4j with reload4j in v3.2.0. The discussion thread is here: https://lists.apache.org/thread/qo1y3249xldt4cpg6r8zkcq5m1q32bf1 \r\n\r\n \r\n\r\nWelcome to provide your comments and thoughts. Thanks.\r\n\r\n "
+        },
+        {
+          "author": {
+            "displayName": "Bruno Cadonna"
+          },
+          "created": "2022-03-24T11:45:26.648+0000",
+          "body": "[~brandonk] Actually, I removed it from the 3.2.0 release and postponed it to the 3.3.0 release. You are welcome to comment in the discussion thread [~showuon] posted above. You could lay out your arguments and propose to block the 3.2.0 release on this ticket. You could also comment on the compatibility issues that were brought up in the thread from user perspective. All of these would help us to take a good decision about how to proceed.    "
+        },
+        {
+          "author": {
+            "displayName": "Akansh Shandilya"
+          },
+          "created": "2022-03-31T11:19:13.031+0000",
+          "body": "[~showuon] I appreciate your dedication and efforts to resolve log4j 1.x EOL version from Kafka.\r\n\r\nLog4j 1.x is declared End-of-Life by Apache-log4j in 2015. Apache-Kafka is still using.\r\n\r\nAs well as security scanners are reporting EOL version of log4j as vulnerability in Kafka, and there is little scope to explain it to whole world. \r\n\r\n[~showuon]  please discuss and review to find a solution with user, who has blocked chance of log4j upgrade (log4j 1.x to log4j 2.x) in Kafka in 3.2.0 release.\r\n\r\n \r\n\r\nOr is there any plan to remove log4 1.x in 3.2.0 release? Please advise."
+        },
+        {
+          "author": {
+            "displayName": "Bruno Cadonna"
+          },
+          "created": "2022-03-31T12:43:34.052+0000",
+          "body": "[~akansh] As stated in the mailing list thread [~showuon] posted above, we will not upgrade to log4j2 in 3.2.0 due to risks of breaking backward compatibility. However, we will replace log4j12 with reload4j in 3.2.0 and 3.1.1 to account for the CVE. I merged the corresponding PR yesterday (see https://issues.apache.org/jira/browse/KAFKA-13660). We plan to move to log4j2 in the next major release 4.0.0."
+        },
+        {
+          "author": {
+            "displayName": "Mickael Maison"
+          },
+          "created": "2024-07-15T10:07:48.260+0000",
+          "body": "[~dongjin] I see you are active again. We now have a much clearer view of the timeline towards Kafka 4.0. Are you able to complete this task?"
+        },
+        {
+          "author": {
+            "displayName": "TengYao Chi"
+          },
+          "created": "2024-10-02T09:53:41.412+0000",
+          "body": "Hi everyone,\r\n\r\nIf [~dongjin] doesn't have enough bandwidth, I'd be willing to take it over."
+        },
+        {
+          "author": {
+            "displayName": "Luke Chen"
+          },
+          "created": "2024-10-02T11:31:19.983+0000",
+          "body": "Thanks [~frankvicky], assigned to you."
+        }
+      ]
+    }
+  }
+}

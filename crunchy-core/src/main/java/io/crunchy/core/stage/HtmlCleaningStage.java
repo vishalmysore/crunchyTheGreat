@@ -20,6 +20,10 @@ public final class HtmlCleaningStage implements PipelineStage {
     private static final Pattern SIGNATURE = Pattern.compile("(?s)(?m)^--\\s*$.*");
     private static final Pattern EXCESS_BLANK_LINES = Pattern.compile("\\n{3,}");
     private static final Pattern TRAILING_SPACES = Pattern.compile("(?m)[ \\t]+$");
+    // NBSP and friends. Jira content is full of U+00A0, and JS trim() strips it
+    // while Java's strip() does not, so they must be normalised for parity.
+    private static final Pattern UNICODE_SPACES =
+            Pattern.compile("[\\u00A0\\u1680\\u2000-\\u200A\\u202F\\u205F\\u3000]");
 
     @Override
     public String name() {
@@ -34,7 +38,10 @@ public final class HtmlCleaningStage implements PipelineStage {
     }
 
     static String clean(String raw) {
-        String text = raw;
+        // Normalise line endings and exotic spaces before anything else. Real
+        // Jira payloads carry CRLF and are littered with non-breaking spaces;
+        // both must go early or the two implementations drift apart.
+        String text = UNICODE_SPACES.matcher(raw.replaceAll("\\r\\n?", "\n")).replaceAll(" ");
         if (HTML_HINT.matcher(text).find()) {
             // Preserve line structure: mark block boundaries with a sentinel that
             // survives Jsoup's whitespace normalization, then restore newlines.

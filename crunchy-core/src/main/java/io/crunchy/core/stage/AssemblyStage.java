@@ -25,7 +25,10 @@ import java.util.regex.Pattern;
  */
 public final class AssemblyStage implements PipelineStage {
 
-    private static final Pattern ISSUE_KEY = Pattern.compile("\\b([A-Z][A-Z0-9]{1,9}-\\d+)\\b");
+    // The trailing (?!-) stops us matching a prefix of a longer identifier: real
+    // Kafka tickets cite CVE-2019-12399, and without it we'd file "CVE-2019" as
+    // a related Jira issue.
+    private static final Pattern ISSUE_KEY = Pattern.compile("\\b([A-Z][A-Z0-9]{1,9}-\\d+)\\b(?!-)");
     private static final Pattern BUSINESS_GOAL_SENTENCE = Pattern.compile(
             "(?i)\\b(so that|in order to|business goal|objective|the goal is)\\b");
 

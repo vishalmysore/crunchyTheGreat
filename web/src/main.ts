@@ -22,11 +22,18 @@ const levelEl = $<HTMLSelectElement>('level');
 const formatEl = $<HTMLSelectElement>('format');
 const sampleNameEl = $<HTMLSelectElement>('sampleName');
 
-/** Bundled demo tickets across different (non-finance) software domains. */
+/**
+ * Bundled demo tickets. The first three are synthetic, across different
+ * (non-finance) software domains. The last two are real Apache tickets pulled
+ * from the public Jira — they are messier, noisier, and compress far harder
+ * than anything hand-written.
+ */
 const SAMPLES: ReadonlyArray<{ file: string; label: string }> = [
   { file: 'healthcare-issue.json', label: 'Healthcare · FHIR / EHR sync' },
   { file: 'insurance-issue.json', label: 'Insurance · claims adjudication' },
   { file: 'logistics-issue.json', label: 'Logistics · shipment tracking' },
+  { file: 'real-spark-40588.json', label: 'REAL · Apache Spark SPARK-40588' },
+  { file: 'real-kafka-9366.json', label: 'REAL · Apache Kafka KAFKA-9366' },
 ];
 
 for (const s of SAMPLES) {

@@ -7,15 +7,25 @@ import { CompressionPipeline } from '../src/core/pipeline/CompressionPipeline.js
 import { toMarkdown } from '../src/core/export/MarkdownExporter.js';
 
 /**
- * Every bundled demo ticket must parse and compress into a useful CIR. This
- * guards against a hand-authored sample whose phrasing quietly stops matching
- * the extractors. Domains are intentionally non-finance.
+ * Every bundled synthetic ticket must parse and compress into a useful CIR.
+ * This guards against a hand-authored sample whose phrasing quietly stops
+ * matching the extractors. Domains are intentionally non-finance.
  */
 const SAMPLES = [
   'healthcare-issue.json',
   'insurance-issue.json',
   'logistics-issue.json',
 ];
+
+/**
+ * Real Apache tickets, held to a deliberately weaker bar. They compress much
+ * harder than the synthetic ones (87-91% vs ~33%), but they carry no
+ * "Acceptance Criteria" heading and almost no "let's use X" decision sentence,
+ * so the extractors barely fire. That gap is real and known — these tests
+ * record today's behaviour rather than pretend otherwise, and should tighten
+ * as the heuristics learn real-world phrasing.
+ */
+const REAL_SAMPLES = ['real-kafka-9366.json', 'real-spark-40588.json'];
 
 function load(file: string) {
   const path = fileURLToPath(new URL(`../public/${file}`, import.meta.url));
@@ -86,5 +96,27 @@ describe.each(SAMPLES)('sample %s', (file) => {
       expect(cir.decisions.length, `decisions at ${level}`).toBeGreaterThanOrEqual(1);
       expect(cir.acceptanceCriteria.length, `criteria at ${level}`).toBeGreaterThanOrEqual(3);
     }
+  });
+});
+
+describe.each(REAL_SAMPLES)('real Apache sample %s', (file) => {
+  const doc = load(file);
+  const result = CompressionPipeline.standard().process(doc, CompressionLevel.FULL);
+
+  it('parses a real Jira payload', () => {
+    expect(doc.key).toMatch(/^[A-Z]+-\d+$/);
+    expect(doc.comments.length).toBeGreaterThan(5);
+  });
+
+  it('compresses hard — this is what a noisy real ticket looks like', () => {
+    expect(result.compressionRatio).toBeGreaterThanOrEqual(0.8);
+  });
+
+  it('never reports a CVE id as a related Jira issue', () => {
+    expect(result.relatedIssues.some((k) => k.startsWith('CVE'))).toBe(false);
+  });
+
+  it('produces a brief that is not empty', () => {
+    expect(result.summary.trim().length).toBeGreaterThan(0);
   });
 });

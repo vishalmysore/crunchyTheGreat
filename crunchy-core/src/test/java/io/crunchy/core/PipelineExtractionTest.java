@@ -66,6 +66,21 @@ class PipelineExtractionTest {
     }
 
     @Test
+    void cveIdIsNotARelatedJiraIssue() {
+        NormalizedDocument doc = new NormalizedDocument();
+        doc.setKey("ABC-6");
+        doc.setTitle("Bump dependency");
+        doc.setDescription("Upgrade to pick up the fix for CVE-2019-12399. "
+                + "See also OTHER-42 for context.");
+
+        CompressedContext result = run(doc);
+        assertTrue(result.getRelatedIssues().contains("OTHER-42"),
+                "real issue key missing: " + result.getRelatedIssues());
+        assertTrue(result.getRelatedIssues().stream().noneMatch(k -> k.startsWith("CVE")),
+                "CVE id leaked into relatedIssues: " + result.getRelatedIssues());
+    }
+
+    @Test
     void collapsesRepeatedComments() {
         NormalizedDocument doc = new NormalizedDocument();
         doc.setKey("ABC-3");
