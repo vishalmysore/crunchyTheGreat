@@ -27,20 +27,11 @@ public final class TodoExtractionStage implements PipelineStage {
             }
             for (String sentence : TextUtil.sentences(block.getText())) {
                 if (TODO.matcher(sentence).find()) {
-                    block.getCategories().add(Block.Category.TODO);
                     String cleaned = sentence.replaceFirst("(?i)^(todo|fixme)\\s*[:\\-]\\s*", "");
-                    addUnique(context, cleaned);
+                    context.addExtract(ProcessingContext.CirList.TODOS, cleaned,
+                            Block.Category.TODO, block);
                 }
             }
-        }
-    }
-
-    private void addUnique(ProcessingContext context, String value) {
-        String normalized = TextUtil.normalizeForComparison(value);
-        boolean exists = context.getResult().getTodos().stream()
-                .anyMatch(v -> TextUtil.normalizeForComparison(v).equals(normalized));
-        if (!exists) {
-            context.getResult().getTodos().add(value);
         }
     }
 }

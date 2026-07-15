@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { parseJiraIssue } from '../src/connector/jira/JiraIssueParser.js';
 import { CompressionLevel } from '../src/core/model/CompressionLevel.js';
 import { CompressionPipeline } from '../src/core/pipeline/CompressionPipeline.js';
+import { toMarkdown } from '../src/core/export/MarkdownExporter.js';
 
 /**
  * Every bundled demo ticket must parse and compress into a useful CIR. This
@@ -56,5 +57,34 @@ describe.each(SAMPLES)('sample %s', (file) => {
     const tiny = CompressionPipeline.standard().process(doc, CompressionLevel.TINY);
     expect(tiny.compressionRatio).toBeGreaterThan(result.compressionRatio);
     expect(tiny.compressionRatio).toBeGreaterThanOrEqual(0.6);
+  });
+
+  // Regression guard: levels once reported different ratios while emitting
+  // identical content, so tiny could even be larger than full.
+  it('emits strictly less content as the level tightens', () => {
+    const emitted = (level: CompressionLevel): number =>
+      toMarkdown(CompressionPipeline.standard().process(doc, level)).length;
+
+    const full = emitted(CompressionLevel.FULL);
+    const medium = emitted(CompressionLevel.MEDIUM);
+    const small = emitted(CompressionLevel.SMALL);
+    const tiny = emitted(CompressionLevel.TINY);
+
+    expect(tiny).toBeLessThan(small);
+    expect(small).toBeLessThan(medium);
+    expect(medium).toBeLessThan(full);
+  });
+
+  it('keeps decisions and acceptance criteria at every level', () => {
+    for (const level of [
+      CompressionLevel.FULL,
+      CompressionLevel.MEDIUM,
+      CompressionLevel.SMALL,
+      CompressionLevel.TINY,
+    ]) {
+      const cir = CompressionPipeline.standard().process(doc, level);
+      expect(cir.decisions.length, `decisions at ${level}`).toBeGreaterThanOrEqual(1);
+      expect(cir.acceptanceCriteria.length, `criteria at ${level}`).toBeGreaterThanOrEqual(3);
+    }
   });
 });

@@ -79,10 +79,13 @@ function compress(): void {
     outputEl.textContent = rendered;
     outputEl.classList.remove('muted', 'err');
 
+    // Reduction is derived from the same before/after the token counts use, so
+    // the two stats can never contradict each other.
     const before = document_.rawLength();
     const after = rendered.length;
+    const reduction = before > 0 ? Math.max(0, 1 - after / before) : 0;
     statsEl.innerHTML =
-      stat(`${Math.round(result.compressionRatio * 100)}%`, 'reduction', true) +
+      stat(`${Math.round(reduction * 100)}%`, 'reduction', true) +
       stat(`${tokens(before).toLocaleString()}→${tokens(after).toLocaleString()}`, 'tokens') +
       stat(result.confidence.toFixed(2), 'confidence') +
       stat(`${elapsed} ms`, 'time');

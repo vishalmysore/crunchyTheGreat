@@ -3,26 +3,14 @@ import { PipelineStage } from '../pipeline/PipelineStage.js';
 import { ProcessingContext } from '../pipeline/ProcessingContext.js';
 import { levelThreshold } from '../model/CompressionLevel.js';
 import { looksLikeLogDump } from '../text/TextUtil.js';
+import { DEFAULT_WEIGHT, WEIGHTS } from '../pipeline/Weights.js';
 
 /**
  * Stage 8: every block gets a value score; blocks under the compression
- * level's threshold are dropped. Scores mirror the design targets
- * (decisions 0.98, acceptance criteria 0.96, business goals 0.94, plain
- * discussion 0.50, greetings ~0).
+ * level's threshold are dropped. This governs the prose-derived fields
+ * (summary, business goal, architecture); the assembly stage gates the
+ * extracted CIR lists by the same thresholds.
  */
-const WEIGHTS: Record<Category, number> = {
-  [Category.DECISION]: 0.98,
-  [Category.ACCEPTANCE_CRITERIA]: 0.96,
-  [Category.BUSINESS_GOAL]: 0.94,
-  [Category.ARCHITECTURE]: 0.9,
-  [Category.CONSTRAINT]: 0.88,
-  [Category.RISK]: 0.85,
-  [Category.DEPENDENCY]: 0.82,
-  [Category.TODO]: 0.78,
-  [Category.DISCUSSION]: 0.5,
-  [Category.NOISE]: 0.01,
-};
-
 const BUSINESS_GOAL =
   /\b(so that|in order to|business goal|objective|the goal is|customers? (?:want|need)|revenue|compliance)\b/i;
 
@@ -61,9 +49,9 @@ export class RankingStage implements PipelineStage {
     if (block.categories.has(Category.NOISE)) {
       return WEIGHTS[Category.NOISE];
     }
-    let best = 0.4;
+    let best = DEFAULT_WEIGHT;
     for (const c of block.categories) {
-      best = Math.max(best, WEIGHTS[c] ?? 0.4);
+      best = Math.max(best, WEIGHTS[c] ?? DEFAULT_WEIGHT);
     }
     // Repetition is an emphasis signal: a point made three times mattered to
     // the team even if phrased as plain discussion.

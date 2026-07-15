@@ -1,7 +1,7 @@
 import { Category } from '../pipeline/Block.js';
 import { PipelineStage } from '../pipeline/PipelineStage.js';
 import { ProcessingContext } from '../pipeline/ProcessingContext.js';
-import { normalizeForComparison, sentences } from '../text/TextUtil.js';
+import { sentences } from '../text/TextUtil.js';
 
 /**
  * Stage 4: pulls architecture/technology decisions out of prose. Sentences
@@ -28,23 +28,12 @@ export class DecisionExtractionStage implements PipelineStage {
         const decision = DECISION.test(sentence);
         const rejection = REJECTION.test(sentence);
         if (decision || rejection) {
-          block.categories.add(Category.DECISION);
-          this.addUnique(context, sentence);
+          context.addExtract('decisions', sentence, Category.DECISION, block);
           if (ARCHITECTURE_HINT.test(sentence)) {
             block.categories.add(Category.ARCHITECTURE);
           }
         }
       }
-    }
-  }
-
-  private addUnique(context: ProcessingContext, sentence: string): void {
-    const normalized = normalizeForComparison(sentence);
-    const exists = context.result.decisions.some(
-      (d) => normalizeForComparison(d) === normalized,
-    );
-    if (!exists) {
-      context.result.decisions.push(sentence);
     }
   }
 }

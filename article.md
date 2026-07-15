@@ -1,5 +1,5 @@
 ---
-title: "Stop Feeding Your AI Coding Agent Raw Jira Tickets. Compress Them 65% First."
+title: "Stop Feeding Your AI Coding Agent Raw Jira Tickets. Compress Them 60% First."
 published: false
 description: "A real Jira ticket is 80% noise — bot messages, duplicate debates, stack traces, greetings. CrunchyTheGreat strips it to a clean, structured brief 70–95% smaller, deterministically, 100% in your browser. No server. No LLM. Open source."
 tags: ai, jira, webdev, opensource
@@ -8,7 +8,7 @@ canonical_url: https://github.com/vishalmysore/crunchyTheGreat
 ---
 
 <p align="center">
-  <img src="docs/hero.svg" alt="CrunchyTheGreat — compress messy Jira tickets 65% smaller before your AI coding agent reads them" width="920">
+  <img src="docs/hero.svg" alt="CrunchyTheGreat — compress messy Jira tickets 60% smaller before your AI coding agent reads them" width="920">
 </p>
 
 <p align="center">
@@ -16,7 +16,7 @@ canonical_url: https://github.com/vishalmysore/crunchyTheGreat
   <a href="https://github.com/vishalmysore/crunchyTheGreat">⭐ Star on GitHub</a>
 </p>
 
-> **TL;DR** — Enterprise Jira tickets are ~80% noise. Your AI agent (Claude Code, Devin, Copilot, Codex, OpenHands) burns thousands of tokens reading bot spam, duplicate arguments, stack traces and "thanks!" comments before it finds the one architecture decision that actually matters. **CrunchyTheGreat** is an open-source engine that compresses a ticket **70–95%** *before* the agent ever sees it — deterministically, with **no LLM**, running **entirely in your browser**.
+> **TL;DR** — Enterprise Jira tickets are ~80% noise. Your AI agent (Claude Code, Devin, Copilot, Codex, OpenHands) burns thousands of tokens reading bot spam, duplicate arguments, stack traces and "thanks!" comments before it finds the one architecture decision that actually matters. **CrunchyTheGreat** is an open-source engine that strips a ticket to a clean structured brief *before* the agent ever sees it — **60% fewer tokens** even on a tidy ticket, far more on a noisy one — deterministically, with **no LLM**, running **entirely in your browser**.
 
 ---
 
@@ -41,10 +41,10 @@ There's a better way, and it doesn't involve a model at all.
 ## What if the ticket compressed itself?
 
 <p align="center">
-  <img src="docs/app-demo.svg" alt="CrunchyTheGreat web app: a messy 12-comment healthcare Jira issue compressed to a clean structured brief, 65% smaller, in milliseconds" width="960">
+  <img src="docs/app-demo.svg" alt="CrunchyTheGreat web app: a messy 12-comment healthcare Jira issue compressed to a clean structured brief, 60% smaller, in milliseconds" width="960">
 </p>
 
-Paste a Jira export on the left. Get a clean, structured brief on the right. **65% fewer tokens, in single-digit milliseconds, and nothing leaves your browser tab.**
+Paste a Jira export on the left. Get a clean, structured brief on the right. **60% fewer tokens, in single-digit milliseconds, and nothing leaves your browser tab.**
 
 That example is one of three bundled (synthetic) tickets — spanning **healthcare, insurance and logistics** — each a realistic mess: 12 comments, an HTML-formatted description, a **stack trace** someone dumped in a comment, three separate people repeating the same decision, two bot messages, and a "Thanks!" at the end.
 
@@ -94,7 +94,7 @@ This is the core bet, so it's worth being blunt about it:
 - **It runs offline.** No ticket data is shipped to a third-party API just to be shortened. For enterprise Jira behind a firewall, that's not a nice-to-have, it's the whole ballgame.
 - **It's auditable.** Every dropped paragraph is *reported* in `ignoredContent`, so you can see exactly what was removed and why. Nothing vanishes silently.
 
-An optional LLM pass is still supported for teams that want prose polish — but it's a layer *on top* of a brief that's already 80% smaller, not a substitute for one.
+An optional LLM pass is still supported for teams that want prose polish — but it's a layer *on top* of an already-compressed brief, not a substitute for one.
 
 ## Under the hood: 10 stages, no magic
 
@@ -112,7 +112,7 @@ Each stage does one small, testable thing:
 9. **Rank** — every block gets a value score; anything below your chosen threshold is dropped.
 10. **Assemble** — emit the structured output with a confidence score and the measured compression ratio.
 
-Four compression levels let you dial it in: **Tiny** (~90% smaller, decisions + criteria only), **Small**, **Medium**, and **Full** (keep everything except detected noise).
+Four compression levels gate whole sections, so each emits strictly less than the one below it: **Tiny** (decisions + acceptance criteria — the irreducible brief), **Small** (+ constraints), **Medium** (+ risks), **Full** (+ dependencies and TODOs — everything except detected noise).
 
 ## The real unlock: one context format for every tool
 
@@ -153,7 +153,7 @@ No. The browser app and the pipeline run entirely client-side. There is no serve
 It's deterministic (same output every time), costs zero tokens to run, works offline, and reports exactly what it removed. An LLM pass is available as an optional enhancement, not a dependency.
 
 **How much smaller are tickets, really?**
-The design target is 70–95%. The bundled healthcare ticket compresses **41% at Full fidelity and 65% at Tiny** — while preserving every decision, acceptance criterion, risk and blocker. Noisier real-world tickets (huge log dumps, long duplicate threads) compress considerably harder.
+The bundled healthcare ticket's Markdown brief is **33% smaller at Full fidelity and 60% smaller at Tiny** (642 → 258 tokens) — while preserving every decision, acceptance criterion, risk and blocker. Noisier real-world tickets (the 500 KB log dumps and 180 KB comment threads above) compress far harder; that is where the 70–95% design target lives.
 
 **Which agents does it help?**
 Any token-limited coding agent: Claude Code, Devin, GitHub Copilot, Codex, OpenHands, Cursor — anything you paste ticket context into.

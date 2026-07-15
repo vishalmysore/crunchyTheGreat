@@ -81,9 +81,20 @@ Options:
 -o, --output   output file           (default: stdout)
 ```
 
-Compression levels map to rank-score thresholds: `tiny` keeps only
-decision/AC-grade content (~90% reduction target), `full` keeps everything
-except detected noise.
+Compression levels gate whole CIR sections by category weight, so each level
+emits strictly less than the one below it:
+
+| Level | Threshold | Sections emitted |
+| --- | --- | --- |
+| `tiny` | 0.90 | decisions + acceptance criteria (the irreducible brief) |
+| `small` | 0.86 | + constraints |
+| `medium` | 0.84 | + risks |
+| `full` | 0.00 | + dependencies, todos — everything except detected noise |
+
+`compressionRatio` is measured against the text the agent actually receives
+(every string the CIR emits), not against surviving internal blocks. The web
+app reports the reduction of the rendered Markdown brief against the raw
+ticket text — a few points lower, since Markdown adds its own syntax.
 
 ## Try it
 
@@ -98,9 +109,13 @@ except detected noise.
 | `logistics-issue.json` | Logistics | shipment tracking from carrier webhooks |
 
 Each has HTML formatting, duplicated decisions, bot messages, a stack-trace
-dump and greetings. The healthcare ticket compresses **41% at full fidelity
-and 65% at tiny** while keeping every decision, rejection, acceptance
-criterion, risk, TODO and the EHR-14 blocker.
+dump and greetings. The healthcare ticket's Markdown brief is **33% smaller at
+full fidelity and 60% smaller at tiny** (642 → 258 tokens), keeping every
+decision, rejection and acceptance criterion. Tickets with the big log dumps
+and long duplicate threads common in real Jira compress considerably harder.
+
+Both implementations are byte-identical: the Java CLI and the TypeScript CLI
+emit the same Markdown for every sample at every level.
 
 ## Extending
 

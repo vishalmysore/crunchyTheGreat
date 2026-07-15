@@ -1,7 +1,7 @@
 import { Category } from '../pipeline/Block.js';
 import { PipelineStage } from '../pipeline/PipelineStage.js';
 import { ProcessingContext } from '../pipeline/ProcessingContext.js';
-import { normalizeForComparison, sentences } from '../text/TextUtil.js';
+import { sentences } from '../text/TextUtil.js';
 
 /** Stage 6: open work items — TODO/FIXME markers and follow-up phrasing. */
 const TODO =
@@ -17,19 +17,10 @@ export class TodoExtractionStage implements PipelineStage {
       }
       for (const sentence of sentences(block.text)) {
         if (TODO.test(sentence)) {
-          block.categories.add(Category.TODO);
           const cleaned = sentence.replace(/^(todo|fixme)\s*[:\-]\s*/i, '');
-          this.addUnique(context, cleaned);
+          context.addExtract('todos', cleaned, Category.TODO, block);
         }
       }
-    }
-  }
-
-  private addUnique(context: ProcessingContext, value: string): void {
-    const normalized = normalizeForComparison(value);
-    const exists = context.result.todos.some((v) => normalizeForComparison(v) === normalized);
-    if (!exists) {
-      context.result.todos.push(value);
     }
   }
 }

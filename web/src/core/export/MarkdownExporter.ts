@@ -1,6 +1,12 @@
 import { CompressedContext } from '../model/CompressedContext.js';
 
-/** Renders the CIR as compact Markdown, ready to paste into an agent prompt. */
+/**
+ * Renders the CIR as compact Markdown, ready to paste into an agent prompt.
+ *
+ * `ignoredContent` is deliberately omitted: it is a diagnostic for humans
+ * auditing what was removed, and an agent should not spend context reading
+ * "3 greetings removed". It remains available in the JSON CIR.
+ */
 export function toMarkdown(c: CompressedContext): string {
   const md: string[] = [];
   md.push(`# ${c.issue}\n`);
@@ -18,7 +24,6 @@ export function toMarkdown(c: CompressedContext): string {
   section(md, 'TODOs', c.todos);
   section(md, 'Dependencies', c.dependencies);
   section(md, 'Related Issues', c.relatedIssues);
-  section(md, 'Ignored Content', c.ignoredContent);
   md.push('---');
   md.push(
     `confidence: ${c.confidence} | compression: ${Math.round(c.compressionRatio * 100)}%`,

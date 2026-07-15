@@ -1,17 +1,31 @@
 import { CompressedContext } from '../model/CompressedContext.js';
+import { levelThreshold } from '../model/CompressionLevel.js';
 import { Category } from '../pipeline/Block.js';
 import { PipelineStage } from '../pipeline/PipelineStage.js';
-import { ProcessingContext } from '../pipeline/ProcessingContext.js';
-import { normalizeForComparison, sentences } from '../text/TextUtil.js';
+import { CirListName, ProcessingContext } from '../pipeline/ProcessingContext.js';
+import { weightOf } from '../pipeline/Weights.js';
+import { nearDuplicate } from '../text/TextSimilarity.js';
+import { sentences } from '../text/TextUtil.js';
 
 /**
- * Final stage: assembles the CIR document — summary, business goal,
- * architecture notes, related issues, ignored-content report, confidence and
- * the measured compression ratio.
+ * Final stage: assembles the CIR document.
+ *
+ * This is where the compression level actually bites. Extraction ran earlier
+ * and only *recorded* candidates; here each one is admitted to the output only
+ * if its category weight clears the level's threshold. That is what makes
+ * TINY genuinely smaller than FULL rather than merely differently reported.
  */
 const ISSUE_KEY = /\b([A-Z][A-Z0-9]{1,9}-\d+)\b/g;
-const BUSINESS_GOAL_SENTENCE =
-  /\b(so that|in order to|business goal|objective|the goal is)\b/i;
+const BUSINESS_GOAL_SENTENCE = /\b(so that|in order to|business goal|objective|the goal is)\b/i;
+
+const LISTS: CirListName[] = [
+  'decisions',
+  'constraints',
+  'acceptanceCriteria',
+  'risks',
+  'todos',
+  'dependencies',
+];
 
 export class AssemblyStage implements PipelineStage {
   readonly name = 'assembly';
@@ -22,12 +36,45 @@ export class AssemblyStage implements PipelineStage {
 
     result.issue = `${document.key} ${document.title}`.trim();
     result.summary = this.buildSummary(context);
-    result.businessGoal = this.findBusinessGoal(context);
+    result.businessGoal = this.findBusinessGoal(context, result.summary);
+    this.collectLists(context);
     this.collectArchitecture(context);
     this.collectRelatedIssues(context);
     result.ignoredContent.push(...context.ignoredContent);
     result.confidence = this.confidence(result);
     result.compressionRatio = this.compressionRatio(context);
+  }
+
+  /** Admits extracts whose category clears the level threshold, collapsing near-duplicates. */
+  private collectLists(context: ProcessingContext): void {
+    const threshold = levelThreshold(context.level);
+    for (const list of LISTS) {
+      const target = context.result[list];
+      for (const extract of context.extracts) {
+        if (extract.list !== list || weightOf(extract.category) < threshold) {
+          continue;
+        }
+        this.addUnique(target, extract.text);
+      }
+    }
+  }
+
+  /**
+   * Adds a value unless the list already says the same thing. When a near
+   * duplicate is longer (and so more informative) it replaces the incumbent —
+   * "Let's use SQS." should not survive alongside
+   * "For ingestion, let's use SQS FIFO queues per carrier."
+   */
+  private addUnique(target: string[], value: string): void {
+    for (let i = 0; i < target.length; i++) {
+      if (nearDuplicate(target[i], value)) {
+        if (value.length > target[i].length) {
+          target[i] = value;
+        }
+        return;
+      }
+    }
+    target.push(value);
   }
 
   private buildSummary(context: ProcessingContext): string {
@@ -41,43 +88,37 @@ export class AssemblyStage implements PipelineStage {
     return context.document.title;
   }
 
-  private findBusinessGoal(context: ProcessingContext): string {
+  /** Omitted when the summary already states it — no point paying twice. */
+  private findBusinessGoal(context: ProcessingContext, summary: string): string {
     for (const block of context.liveBlocks()) {
       for (const sentence of sentences(block.text)) {
         if (BUSINESS_GOAL_SENTENCE.test(sentence)) {
-          return sentence;
+          return summary.includes(sentence) || nearDuplicate(summary, sentence) ? '' : sentence;
         }
       }
     }
     return '';
   }
 
+  /** Architecture notes that the decisions list does not already carry. */
   private collectArchitecture(context: ProcessingContext): void {
+    if (levelThreshold(context.level) > weightOf(Category.ARCHITECTURE)) {
+      return;
+    }
+    const decisions = context.result.decisions;
     for (const block of context.liveBlocks()) {
       if (!block.categories.has(Category.ARCHITECTURE)) {
         continue;
       }
-      const text = block.text;
-      // Keep architecture entries sentence-sized, not whole paragraphs.
-      for (const sentence of sentences(text)) {
-        if (!context.result.decisions.some((d) => d === sentence)) {
+      for (const sentence of sentences(block.text)) {
+        if (decisions.some((d) => nearDuplicate(d, sentence))) {
           continue;
         }
-        this.addUnique(context, sentence);
+        if (block.categories.has(Category.DECISION)) {
+          continue; // the decisions list is the canonical home
+        }
+        this.addUnique(context.result.architecture, sentence);
       }
-      if (context.result.architecture.length === 0) {
-        this.addUnique(context, sentences(text)[0]);
-      }
-    }
-  }
-
-  private addUnique(context: ProcessingContext, value: string): void {
-    const normalized = normalizeForComparison(value);
-    const exists = context.result.architecture.some(
-      (v) => normalizeForComparison(v) === normalized,
-    );
-    if (!exists) {
-      context.result.architecture.push(value);
     }
   }
 
@@ -107,20 +148,28 @@ export class AssemblyStage implements PipelineStage {
     if (result.summary.trim().length > 0) confidence += 0.1;
     if (result.decisions.length > 0) confidence += 0.15;
     if (result.acceptanceCriteria.length > 0) confidence += 0.15;
-    if (result.businessGoal.trim().length > 0) confidence += 0.05;
+    if (result.businessGoal.trim().length > 0 || result.summary.trim().length > 0) confidence += 0.05;
     return Math.min(0.95, this.round2(confidence));
   }
 
+  /**
+   * Measured against the text the agent actually receives — every string the
+   * CIR emits — not against surviving blocks. An honest number here is worth
+   * more than a flattering one.
+   */
   private compressionRatio(context: ProcessingContext): number {
     const original = context.document.rawLength();
     if (original === 0) {
       return 0.0;
     }
-    let compressed = 0;
-    for (const b of context.liveBlocks()) {
-      compressed += b.text.length;
+    const r = context.result;
+    let emitted = r.issue.length + r.summary.length + r.businessGoal.length;
+    for (const list of [...LISTS, 'architecture' as const, 'relatedIssues' as const]) {
+      for (const item of r[list]) {
+        emitted += item.length;
+      }
     }
-    return this.round2(Math.max(0.0, 1.0 - compressed / original));
+    return this.round2(Math.max(0.0, 1.0 - emitted / original));
   }
 
   private round2(value: number): number {

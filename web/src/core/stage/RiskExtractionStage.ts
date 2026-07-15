@@ -1,7 +1,7 @@
 import { Category } from '../pipeline/Block.js';
 import { PipelineStage } from '../pipeline/PipelineStage.js';
 import { ProcessingContext } from '../pipeline/ProcessingContext.js';
-import { normalizeForComparison, sentences } from '../text/TextUtil.js';
+import { sentences } from '../text/TextUtil.js';
 
 /**
  * Stage 7: surfaces risks (security, performance, migration, known issues)
@@ -22,21 +22,11 @@ export class RiskExtractionStage implements PipelineStage {
       }
       for (const sentence of sentences(block.text)) {
         if (DEPENDENCY.test(sentence)) {
-          block.categories.add(Category.DEPENDENCY);
-          this.addUnique(context.result.dependencies, sentence);
+          context.addExtract('dependencies', sentence, Category.DEPENDENCY, block);
         } else if (RISK.test(sentence)) {
-          block.categories.add(Category.RISK);
-          this.addUnique(context.result.risks, sentence);
+          context.addExtract('risks', sentence, Category.RISK, block);
         }
       }
-    }
-  }
-
-  private addUnique(target: string[], value: string): void {
-    const normalized = normalizeForComparison(value);
-    const exists = target.some((v) => normalizeForComparison(v) === normalized);
-    if (!exists) {
-      target.push(value);
     }
   }
 }

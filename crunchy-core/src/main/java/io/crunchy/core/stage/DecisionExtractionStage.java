@@ -39,22 +39,13 @@ public final class DecisionExtractionStage implements PipelineStage {
                 boolean decision = DECISION.matcher(sentence).find();
                 boolean rejection = REJECTION.matcher(sentence).find();
                 if (decision || rejection) {
-                    block.getCategories().add(Block.Category.DECISION);
-                    addUnique(context, sentence);
+                    context.addExtract(ProcessingContext.CirList.DECISIONS, sentence,
+                            Block.Category.DECISION, block);
                 }
                 if ((decision || rejection) && ARCHITECTURE_HINT.matcher(sentence).find()) {
                     block.getCategories().add(Block.Category.ARCHITECTURE);
                 }
             }
-        }
-    }
-
-    private void addUnique(ProcessingContext context, String sentence) {
-        String normalized = TextUtil.normalizeForComparison(sentence);
-        boolean exists = context.getResult().getDecisions().stream()
-                .anyMatch(d -> TextUtil.normalizeForComparison(d).equals(normalized));
-        if (!exists) {
-            context.getResult().getDecisions().add(sentence);
         }
     }
 }

@@ -37,11 +37,8 @@ public final class AcceptanceCriteriaExtractionStage implements PipelineStage {
             if (block.isDropped()) {
                 continue;
             }
-            boolean found = extractFromSections(context, block);
-            found |= extractGherkin(context, block);
-            if (found) {
-                block.getCategories().add(Block.Category.ACCEPTANCE_CRITERIA);
-            }
+            extractFromSections(context, block);
+            extractGherkin(context, block);
             extractConstraints(context, block);
         }
     }
@@ -60,7 +57,8 @@ public final class AcceptanceCriteriaExtractionStage implements PipelineStage {
             }
             var item = LIST_ITEM.matcher(line);
             if (item.matches()) {
-                addUnique(context.getResult().getAcceptanceCriteria(), item.group(1).strip());
+                context.addExtract(ProcessingContext.CirList.ACCEPTANCE_CRITERIA,
+                        item.group(1).strip(), Block.Category.ACCEPTANCE_CRITERIA, block);
                 found = true;
             } else if (!line.isBlank() && !GHERKIN_LINE.matcher(line).matches()) {
                 inSection = false; // prose after the list ends the section
@@ -81,17 +79,18 @@ public final class AcceptanceCriteriaExtractionStage implements PipelineStage {
             if (GHERKIN_LINE.matcher(line).matches()) {
                 scenario.add(line.strip().replaceFirst("^[-*]\\s*", ""));
             } else {
-                found |= flushScenario(context, scenario);
+                found |= flushScenario(context, scenario, block);
             }
         }
-        found |= flushScenario(context, scenario);
+        found |= flushScenario(context, scenario, block);
         return found;
     }
 
-    private boolean flushScenario(ProcessingContext context, List<String> scenario) {
+    private boolean flushScenario(ProcessingContext context, List<String> scenario, Block block) {
         boolean emitted = false;
         if (scenario.size() >= 2) {
-            addUnique(context.getResult().getAcceptanceCriteria(), String.join(" ", scenario));
+            context.addExtract(ProcessingContext.CirList.ACCEPTANCE_CRITERIA,
+                    String.join(" ", scenario), Block.Category.ACCEPTANCE_CRITERIA, block);
             emitted = true;
         }
         scenario.clear();
@@ -102,8 +101,8 @@ public final class AcceptanceCriteriaExtractionStage implements PipelineStage {
         for (String sentence : TextUtil.sentences(block.getText())) {
             if (REQUIREMENT_SENTENCE.matcher(sentence).find()
                     && !coveredByAcceptanceCriteria(context, sentence)) {
-                block.getCategories().add(Block.Category.CONSTRAINT);
-                addUnique(context.getResult().getConstraints(), sentence);
+                context.addExtract(ProcessingContext.CirList.CONSTRAINTS, sentence,
+                        Block.Category.CONSTRAINT, block);
             }
         }
     }
@@ -111,17 +110,9 @@ public final class AcceptanceCriteriaExtractionStage implements PipelineStage {
     /** Avoids re-listing a requirement that already appears as an AC item. */
     private boolean coveredByAcceptanceCriteria(ProcessingContext context, String sentence) {
         String normalized = TextUtil.normalizeForComparison(sentence);
-        return context.getResult().getAcceptanceCriteria().stream()
-                .map(TextUtil::normalizeForComparison)
+        return context.getExtracts().stream()
+                .filter(e -> e.list() == ProcessingContext.CirList.ACCEPTANCE_CRITERIA)
+                .map(e -> TextUtil.normalizeForComparison(e.text()))
                 .anyMatch(ac -> normalized.contains(ac) || ac.contains(normalized));
-    }
-
-    private void addUnique(List<String> target, String value) {
-        String normalized = TextUtil.normalizeForComparison(value);
-        boolean exists = target.stream()
-                .anyMatch(v -> TextUtil.normalizeForComparison(v).equals(normalized));
-        if (!exists) {
-            target.add(value);
-        }
     }
 }

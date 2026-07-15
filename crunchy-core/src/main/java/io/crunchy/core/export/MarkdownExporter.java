@@ -4,7 +4,13 @@ import io.crunchy.core.model.CompressedContext;
 
 import java.util.List;
 
-/** Renders the CIR as compact Markdown, ready to paste into an agent prompt. */
+/**
+ * Renders the CIR as compact Markdown, ready to paste into an agent prompt.
+ *
+ * <p>{@code ignoredContent} is deliberately omitted: it is a diagnostic for
+ * humans auditing what was removed, and an agent should not spend context
+ * reading "3 greetings removed". It remains available in the JSON CIR.
+ */
 public final class MarkdownExporter {
 
     public String export(CompressedContext c) {
@@ -24,7 +30,6 @@ public final class MarkdownExporter {
         section(md, "TODOs", c.getTodos());
         section(md, "Dependencies", c.getDependencies());
         section(md, "Related Issues", c.getRelatedIssues());
-        section(md, "Ignored Content", c.getIgnoredContent());
         md.append("---\n")
           .append("confidence: ").append(c.getConfidence())
           .append(" | compression: ").append(Math.round(c.getCompressionRatio() * 100)).append("%\n");

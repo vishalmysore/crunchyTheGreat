@@ -5,7 +5,6 @@ import io.crunchy.core.pipeline.PipelineStage;
 import io.crunchy.core.pipeline.ProcessingContext;
 import io.crunchy.core.text.TextUtil;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -35,22 +34,13 @@ public final class RiskExtractionStage implements PipelineStage {
             }
             for (String sentence : TextUtil.sentences(block.getText())) {
                 if (DEPENDENCY.matcher(sentence).find()) {
-                    block.getCategories().add(Block.Category.DEPENDENCY);
-                    addUnique(context.getResult().getDependencies(), sentence);
+                    context.addExtract(ProcessingContext.CirList.DEPENDENCIES, sentence,
+                            Block.Category.DEPENDENCY, block);
                 } else if (RISK.matcher(sentence).find()) {
-                    block.getCategories().add(Block.Category.RISK);
-                    addUnique(context.getResult().getRisks(), sentence);
+                    context.addExtract(ProcessingContext.CirList.RISKS, sentence,
+                            Block.Category.RISK, block);
                 }
             }
-        }
-    }
-
-    private void addUnique(List<String> target, String value) {
-        String normalized = TextUtil.normalizeForComparison(value);
-        boolean exists = target.stream()
-                .anyMatch(v -> TextUtil.normalizeForComparison(v).equals(normalized));
-        if (!exists) {
-            target.add(value);
         }
     }
 }

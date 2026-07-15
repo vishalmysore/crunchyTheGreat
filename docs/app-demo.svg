@@ -64,10 +64,10 @@
   <!-- stat cards -->
   <g>
     <rect x="628" y="246" width="118" height="52" rx="8" fill="#26262b"/>
-    <text x="640" y="276" font-size="20" font-weight="800" fill="#fb923c">65%</text>
+    <text x="640" y="276" font-size="20" font-weight="800" fill="#fb923c">60%</text>
     <text x="640" y="291" font-size="10" fill="#9a9aa2">REDUCTION</text>
     <rect x="756" y="246" width="140" height="52" rx="8" fill="#26262b"/>
-    <text x="768" y="276" font-size="18" font-weight="800" fill="#ececec">1,099→574</text>
+    <text x="768" y="276" font-size="18" font-weight="800" fill="#ececec">642→258</text>
     <text x="768" y="291" font-size="10" fill="#9a9aa2">TOKENS</text>
     <rect x="906" y="246" width="104" height="52" rx="8" fill="#26262b"/>
     <text x="918" y="276" font-size="18" font-weight="800" fill="#ececec">0.95</text>
@@ -91,8 +91,9 @@
     <text x="628" y="532" fill="#fb923c" font-weight="700">## Risks &amp; Dependencies</text>
     <text x="628" y="552" fill="#c9c9cf">- PHI in logs is a serious HIPAA security risk</text>
     <text x="628" y="571" fill="#c9c9cf">- Blocked by EHR-14 (Epic sandbox credentials)</text>
-    <text x="628" y="599" fill="#fb923c" font-weight="700">## Ignored Content</text>
-    <text x="628" y="619" fill="#6b6b64">- stack trace · 2 bots · 3 greetings · 1 duplicate</text>
+    <text x="628" y="599" fill="#fb923c" font-weight="700">## Related Issues</text>
+    <text x="628" y="619" fill="#c9c9cf">- CARE-2050 · EHR-14</text>
   </g>
-  <text x="628" y="656" font-size="12" fill="#6b6b64">confidence: 0.95 | compression: 65%</text>
+  <text x="628" y="656" font-size="12" fill="#6b6b64">confidence: 0.95 | compression: 60%</text>
+  <text x="628" y="676" font-size="11" fill="#6b6b64">stripped: stack trace · 2 bots · 3 greetings · 1 duplicate (reported in JSON)</text>
 </svg>

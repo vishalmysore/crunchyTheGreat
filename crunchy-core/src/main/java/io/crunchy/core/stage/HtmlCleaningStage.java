@@ -40,8 +40,14 @@ public final class HtmlCleaningStage implements PipelineStage {
             // survives Jsoup's whitespace normalization, then restore newlines.
             Document doc = Jsoup.parse(text);
             doc.select("br").after("\\n");
-            doc.select("li").prepend("- ");
-            doc.select("p, div, li, tr, h1, h2, h3, h4, h5, h6").append("\\n");
+            // Wrapping block tags on both sides puts a blank line between
+            // adjacent paragraphs, so <p>A</p><p>B</p> stays two blocks.
+            doc.select("p, div, tr, h1, h2, h3, h4, h5, h6").prepend("\\n").append("\\n");
+            // List items only close with a newline (never open with one), so a
+            // heading stays in the same block as the list it introduces — the
+            // acceptance-criteria section extractor depends on that. <ul>/<ol>
+            // deliberately contribute no break for the same reason.
+            doc.select("li").prepend("- ").append("\\n");
             text = doc.text().replace("\\n", "\n");
         }
         // Drop everything from an email-quote header onward.

@@ -23,11 +23,8 @@ export class AcceptanceCriteriaExtractionStage implements PipelineStage {
       if (block.dropped) {
         continue;
       }
-      let found = this.extractFromSections(context, block);
-      found = this.extractGherkin(context, block) || found;
-      if (found) {
-        block.categories.add(Category.ACCEPTANCE_CRITERIA);
-      }
+      this.extractFromSections(context, block);
+      this.extractGherkin(context, block);
       this.extractConstraints(context, block);
     }
   }
@@ -46,7 +43,12 @@ export class AcceptanceCriteriaExtractionStage implements PipelineStage {
       }
       const item = LIST_ITEM.exec(line);
       if (item) {
-        this.addUnique(context.result.acceptanceCriteria, item[1].trim());
+        context.addExtract(
+          'acceptanceCriteria',
+          item[1].trim(),
+          Category.ACCEPTANCE_CRITERIA,
+          block,
+        );
         found = true;
       } else if (line.trim().length > 0 && !GHERKIN_LINE.test(line)) {
         inSection = false; // prose after the list ends the section
@@ -64,7 +66,12 @@ export class AcceptanceCriteriaExtractionStage implements PipelineStage {
     // an acceptance criterion.
     const flush = (): void => {
       if (scenario.length >= 2) {
-        this.addUnique(context.result.acceptanceCriteria, scenario.join(' '));
+        context.addExtract(
+          'acceptanceCriteria',
+          scenario.join(' '),
+          Category.ACCEPTANCE_CRITERIA,
+          block,
+        );
         found = true;
       }
       scenario = [];
@@ -87,8 +94,7 @@ export class AcceptanceCriteriaExtractionStage implements PipelineStage {
         REQUIREMENT_SENTENCE.test(sentence) &&
         !this.coveredByAcceptanceCriteria(context, sentence)
       ) {
-        block.categories.add(Category.CONSTRAINT);
-        this.addUnique(context.result.constraints, sentence);
+        context.addExtract('constraints', sentence, Category.CONSTRAINT, block);
       }
     }
   }
@@ -96,16 +102,9 @@ export class AcceptanceCriteriaExtractionStage implements PipelineStage {
   /** Avoids re-listing a requirement that already appears as an AC item. */
   private coveredByAcceptanceCriteria(context: ProcessingContext, sentence: string): boolean {
     const normalized = normalizeForComparison(sentence);
-    return context.result.acceptanceCriteria
-      .map(normalizeForComparison)
+    return context.extracts
+      .filter((e) => e.list === 'acceptanceCriteria')
+      .map((e) => normalizeForComparison(e.text))
       .some((ac) => normalized.includes(ac) || ac.includes(normalized));
-  }
-
-  private addUnique(target: string[], value: string): void {
-    const normalized = normalizeForComparison(value);
-    const exists = target.some((v) => normalizeForComparison(v) === normalized);
-    if (!exists) {
-      target.push(value);
-    }
   }
 }

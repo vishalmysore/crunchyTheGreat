@@ -10,12 +10,25 @@ import java.util.List;
 /** Shared state passed through every pipeline stage. */
 public final class ProcessingContext {
 
+    /** The CIR list an extracted sentence belongs to. */
+    public enum CirList {
+        DECISIONS, CONSTRAINTS, ACCEPTANCE_CRITERIA, RISKS, TODOS, DEPENDENCIES
+    }
+
+    /**
+     * One extracted sentence, tagged with the category that determines its
+     * value score. Extraction records these instead of writing straight into
+     * the result, so the assembly stage can gate them by compression level.
+     */
+    public record Extract(CirList list, String text, Block.Category category, Block block) {}
+
     private final NormalizedDocument document;
     private final CompressionLevel level;
     private final List<SourceText> sources = new ArrayList<>();
     private final List<Block> blocks = new ArrayList<>();
     private final CompressedContext result = new CompressedContext();
     private final List<String> ignoredContent = new ArrayList<>();
+    private final List<Extract> extracts = new ArrayList<>();
 
     public ProcessingContext(NormalizedDocument document, CompressionLevel level) {
         this.document = document;
@@ -34,6 +47,14 @@ public final class ProcessingContext {
     public List<Block> getBlocks() { return blocks; }
     public CompressedContext getResult() { return result; }
     public List<String> getIgnoredContent() { return ignoredContent; }
+
+    public List<Extract> getExtracts() { return extracts; }
+
+    /** Records an extracted sentence and tags its source block's category. */
+    public void addExtract(CirList list, String text, Block.Category category, Block block) {
+        block.getCategories().add(category);
+        extracts.add(new Extract(list, text, category, block));
+    }
 
     /** Blocks that survived filtering, deduplication and ranking. */
     public List<Block> liveBlocks() {
