@@ -4,6 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CrunchyTheGreat — Jira context compression</title>
+    <!-- coi-serviceworker injects COOP/COEP so WebGPU/SharedArrayBuffer work on
+         GitHub Pages, which cannot set those headers itself. Only needed for the
+         optional local-LLM validation panel; the compressor works without it. -->
+    <script>
+      if (typeof SharedArrayBuffer === 'undefined' && 'serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./coi-serviceworker.js').then((reg) => {
+          if (reg && !navigator.serviceWorker.controller) window.location.reload();
+        });
+      }
+    </script>
   </head>
   <body>
     <div id="app">
@@ -68,6 +78,68 @@
           </div>
           <div id="stats" class="stats" hidden></div>
           <pre id="output" class="output muted">Output will appear here.</pre>
+        </div>
+      </section>
+
+      <section class="validate">
+        <div class="validate-head">
+          <div>
+            <h2>Does the agent still understand it?</h2>
+            <p class="muted">
+              Run a local model (WebGPU, in this tab) against the
+              <strong>raw ticket</strong> and the <strong>compressed brief</strong> —
+              same question, both contexts. If the answers agree, the crunch kept
+              what mattered.
+            </p>
+          </div>
+          <button id="ab-toggle" class="ghost" type="button" aria-expanded="false">Show</button>
+        </div>
+
+        <div id="ab-body" hidden>
+          <div class="controls">
+            <label>
+              Model
+              <select id="ab-model"></select>
+            </label>
+            <label>
+              Question
+              <select id="ab-question"></select>
+            </label>
+            <div class="spacer"></div>
+            <button id="ab-run" class="primary" type="button">Run A/B ▸</button>
+          </div>
+
+          <input
+            id="ab-custom"
+            class="ab-custom"
+            type="text"
+            placeholder="…or type your own question"
+            spellcheck="false"
+          />
+
+          <p id="ab-status" class="ab-status muted">
+            First run downloads model weights (cached afterwards). Needs WebGPU —
+            Chrome/Edge 113+. Nothing leaves your machine.
+          </p>
+
+          <div class="ab-grid">
+            <div class="pane ab-pane">
+              <div class="pane-head">
+                <span>Raw ticket</span>
+                <span id="ab-raw-meta" class="muted"></span>
+              </div>
+              <pre id="ab-raw" class="output muted">—</pre>
+            </div>
+            <div class="pane ab-pane">
+              <div class="pane-head">
+                <span>Compressed brief</span>
+                <span id="ab-cmp-meta" class="muted"></span>
+              </div>
+              <pre id="ab-cmp" class="output muted">—</pre>
+            </div>
+          </div>
+
+          <div id="ab-verdict" class="ab-verdict" hidden></div>
         </div>
       </section>
 

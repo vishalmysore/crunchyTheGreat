@@ -208,6 +208,80 @@ textarea:focus {
   color: #dc2626;
 }
 
+/* ── A/B validation panel ─────────────────────────────────────────────── */
+.validate {
+  margin-top: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  padding: 0.9rem 1rem 1rem;
+}
+.validate-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.validate-head h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+.validate-head p {
+  margin: 0.3rem 0 0;
+  font-size: 0.85rem;
+  max-width: 70ch;
+}
+.validate .controls {
+  margin: 0.9rem 0 0.5rem;
+}
+
+.ab-custom {
+  width: 100%;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  padding: 0.45rem 0.6rem;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+}
+.ab-custom:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.ab-status {
+  margin: 0.6rem 0;
+  font-size: 0.8rem;
+}
+
+.ab-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+@media (max-width: 780px) {
+  .ab-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.ab-pane {
+  min-height: 160px;
+}
+.ab-pane .output {
+  font-size: 0.8rem;
+  max-height: 220px;
+}
+
+.ab-verdict {
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  background: var(--accent-weak);
+  border: 1px solid var(--accent);
+  font-size: 0.85rem;
+}
+
 .foot {
   display: flex;
   justify-content: space-between;

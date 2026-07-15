@@ -29,6 +29,30 @@ web/
                     logistics), shared by the UI and tests
 ```
 
+## Validating the crunch with a local LLM
+
+The app ships an optional A/B panel: it asks one local model (WebLLM on WebGPU)
+the **same question** over the **raw ticket** and the **compressed brief**, then
+shows both answers side by side with prompt tokens and latency. If the answers
+agree, the compression kept what mattered; if they don't, it dropped something
+it shouldn't have — which is the point.
+
+Measured locally on the healthcare sample at `tiny` (Qwen2.5 0.5B):
+**690 → 305 prompt tokens (56% fewer) and 9.6 s faster**, with both arms still
+naming the FHIR decision.
+
+Notes:
+- **It is entirely optional.** WebLLM is lazy-loaded into a worker, so the
+  compressor page stays ~24 kB; nothing is fetched until you open the panel.
+- **Pick 1B or larger.** The 0.5B model answers thinly — it often misses a
+  rejected option *even when reading the raw ticket*, which makes it a poor
+  judge of what compression lost.
+- WebGPU + cross-origin isolation are required. Locally Vite sets the COOP/COEP
+  headers; on GitHub Pages `public/coi-serviceworker.js` does it, since Pages
+  cannot send headers itself.
+- The worker, bridge and lazy-tokenizer patterns are adapted from the sibling
+  `ragCompressionDemo/headroom-demo` project.
+
 ## Develop
 
 ```
