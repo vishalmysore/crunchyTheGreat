@@ -25,8 +25,8 @@
     <text x="196" y="168" fill="#ececec">Tiny ▾</text>
     <rect x="290" y="146" width="120" height="34" rx="7" fill="#1f1f23" stroke="#33333a"/>
     <text x="304" y="168" fill="#ececec">Markdown ▾</text>
-    <rect x="960" y="146" width="104" height="34" rx="7" fill="#1f1f23" stroke="#33333a"/>
-    <text x="1012" y="168" fill="#ececec" text-anchor="middle">Load sample</text>
+    <rect x="880" y="146" width="184" height="34" rx="7" fill="#1f1f23" stroke="#33333a"/>
+    <text x="894" y="168" fill="#ececec">Healthcare · FHIR / EHR ▾</text>
     <rect x="1074" y="146" width="86" height="34" rx="7" fill="#f97316"/>
     <text x="1117" y="168" fill="#ffffff" font-weight="700" text-anchor="middle">Compress ▸</text>
   </g>
@@ -36,23 +36,23 @@
   <rect x="40" y="198" width="550" height="34" rx="10" fill="#26262b"/>
   <rect x="40" y="216" width="550" height="16" fill="#26262b"/>
   <text x="58" y="220" font-size="13" font-weight="700" fill="#ececec">Input</text>
-  <text x="572" y="220" font-size="12" fill="#9a9aa2" text-anchor="end">5,897 chars · ~1,474 tok</text>
+  <text x="572" y="220" font-size="12" fill="#9a9aa2" text-anchor="end">4,397 chars · ~1,099 tok</text>
   <g font-family="ui-monospace, Consolas, monospace" font-size="12.5" fill="#8a8a92">
-    <text x="58" y="258">{ "key": "PAY-1421",</text>
-    <text x="58" y="280">  "summary": "Async payment notification service",</text>
-    <text x="58" y="302">  "description": "&lt;p&gt;We need a webhook so that ...",</text>
+    <text x="58" y="258">{ "key": "CARE-2087",</text>
+    <text x="58" y="280">  "summary": "Sync telehealth appointments to the EHR",</text>
+    <text x="58" y="302">  "description": "&lt;p&gt;When a patient books a visit ...",</text>
     <text x="58" y="324">  "comments": [</text>
-    <text x="74" y="346" fill="#6b6b64">    { "author": "Jenkins CI", "body": "Build #4712 …" },</text>
-    <text x="74" y="368">    { "author": "Miguel", "body": "Let's use Kafka." },</text>
-    <text x="74" y="390" fill="#6b6b64">    { "author": "Priya", "body": "Agree. Let's use Kafka." },</text>
-    <text x="74" y="412">    { "author": "Tom", "body": "Rejected RabbitMQ … Redis" },</text>
-    <text x="74" y="434" fill="#6b6b64">    { "author": "Dana", "body": "SocketTimeout… at okhttp3" },</text>
-    <text x="74" y="456" fill="#6b6b64">    { "author": "Miguel", "body": "+1" },</text>
-    <text x="74" y="478">    { "author": "Tom", "body": "TODO: egress allowlist" },</text>
-    <text x="74" y="500" fill="#6b6b64">    { "author": "Automation", "body": "Branch created" },</text>
-    <text x="74" y="522" fill="#6b6b64">    { "author": "Miguel", "body": "Thanks!" } ] }</text>
+    <text x="74" y="346" fill="#6b6b64">    { "author": "Sam", "body": "Hi team!" },</text>
+    <text x="74" y="368">    { "author": "Sam", "body": "Let's use FHIR R4." },</text>
+    <text x="74" y="390" fill="#6b6b64">    { "author": "Lena", "body": "Agree. Let's use FHIR R4." },</text>
+    <text x="74" y="412" fill="#6b6b64">    { "author": "Jenkins CI", "body": "Build #812 …" },</text>
+    <text x="74" y="434">    { "author": "Raj", "body": "Rejected custom bridge … Redis" },</text>
+    <text x="74" y="456" fill="#6b6b64">    { "author": "Priya", "body": "FhirClientConnection…" },</text>
+    <text x="74" y="478" fill="#6b6b64">    { "author": "Sam", "body": "+1" },</text>
+    <text x="74" y="500">    { "author": "Raj", "body": "TODO: retry backoff" },</text>
+    <text x="74" y="522" fill="#6b6b64">    { "author": "Sam", "body": "Thanks!" } ] }</text>
   </g>
-  <text x="58" y="566" font-size="12" fill="#6b6b64">…12 comments · HTML · a 1.8 KB stack trace · 3 duplicates · bots</text>
+  <text x="58" y="566" font-size="12" fill="#6b6b64">…12 comments · HTML · a stack trace · duplicates · bots · greetings</text>
 
   <!-- right pane: output -->
   <rect x="610" y="198" width="550" height="486" rx="10" fill="#1f1f23" stroke="#33333a"/>
@@ -64,34 +64,35 @@
   <!-- stat cards -->
   <g>
     <rect x="628" y="246" width="118" height="52" rx="8" fill="#26262b"/>
-    <text x="640" y="276" font-size="20" font-weight="800" fill="#fb923c">74%</text>
+    <text x="640" y="276" font-size="20" font-weight="800" fill="#fb923c">65%</text>
     <text x="640" y="291" font-size="10" fill="#9a9aa2">REDUCTION</text>
     <rect x="756" y="246" width="140" height="52" rx="8" fill="#26262b"/>
-    <text x="768" y="276" font-size="18" font-weight="800" fill="#ececec">1,474→384</text>
+    <text x="768" y="276" font-size="18" font-weight="800" fill="#ececec">1,099→574</text>
     <text x="768" y="291" font-size="10" fill="#9a9aa2">TOKENS</text>
     <rect x="906" y="246" width="104" height="52" rx="8" fill="#26262b"/>
     <text x="918" y="276" font-size="18" font-weight="800" fill="#ececec">0.95</text>
     <text x="918" y="291" font-size="10" fill="#9a9aa2">CONFIDENCE</text>
     <rect x="1020" y="246" width="90" height="52" rx="8" fill="#26262b"/>
-    <text x="1032" y="276" font-size="18" font-weight="800" fill="#ececec">6 ms</text>
+    <text x="1032" y="276" font-size="18" font-weight="800" fill="#ececec">3 ms</text>
     <text x="1032" y="291" font-size="10" fill="#9a9aa2">TIME</text>
   </g>
 
   <!-- markdown output -->
   <g font-family="ui-monospace, Consolas, monospace" font-size="12.5">
-    <text x="628" y="332" fill="#ececec" font-weight="700"># PAY-1421 Async payment notification service</text>
+    <text x="628" y="332" fill="#ececec" font-weight="700"># CARE-2087 Sync telehealth appointments to the EHR</text>
     <text x="628" y="360" fill="#fb923c" font-weight="700">## Decisions</text>
-    <text x="628" y="380" fill="#c9c9cf">- For the event backbone, let's use Kafka.</text>
-    <text x="628" y="399" fill="#c9c9cf">- Rejected RabbitMQ; we already operate Kafka.</text>
-    <text x="628" y="418" fill="#c9c9cf">- Use Redis for the delivery-attempt cache.</text>
+    <text x="628" y="380" fill="#c9c9cf">- For the integration, let's use FHIR R4.</text>
+    <text x="628" y="399" fill="#c9c9cf">- Rejected a custom JSON bridge; FHIR gives us Epic + Cerner.</text>
+    <text x="628" y="418" fill="#c9c9cf">- Use Redis for the OAuth token cache.</text>
     <text x="628" y="446" fill="#fb923c" font-weight="700">## Acceptance Criteria</text>
-    <text x="628" y="466" fill="#c9c9cf">- Webhook within 5s of a payment state change</text>
-    <text x="628" y="485" fill="#c9c9cf">- Retries w/ backoff up to 24h; HMAC-SHA256 signed</text>
-    <text x="628" y="513" fill="#fb923c" font-weight="700">## Risks &amp; Dependencies</text>
-    <text x="628" y="533" fill="#c9c9cf">- Retry-storm performance risk on the egress proxy</text>
-    <text x="628" y="552" fill="#c9c9cf">- Blocked by PLAT-77 (service-mesh mTLS upgrade)</text>
-    <text x="628" y="580" fill="#fb923c" font-weight="700">## Ignored Content</text>
-    <text x="628" y="600" fill="#6b6b64">- 1.8KB log dump · 2 bots · 3 greetings · 1 duplicate</text>
+    <text x="628" y="466" fill="#c9c9cf">- A new booking appears in the EHR within 60 seconds</text>
+    <text x="628" y="485" fill="#c9c9cf">- PHI encrypted at rest, never written to logs</text>
+    <text x="628" y="504" fill="#c9c9cf">- Every sync writes an immutable audit record for HIPAA</text>
+    <text x="628" y="532" fill="#fb923c" font-weight="700">## Risks &amp; Dependencies</text>
+    <text x="628" y="552" fill="#c9c9cf">- PHI in logs is a serious HIPAA security risk</text>
+    <text x="628" y="571" fill="#c9c9cf">- Blocked by EHR-14 (Epic sandbox credentials)</text>
+    <text x="628" y="599" fill="#fb923c" font-weight="700">## Ignored Content</text>
+    <text x="628" y="619" fill="#6b6b64">- stack trace · 2 bots · 3 greetings · 1 duplicate</text>
   </g>
-  <text x="628" y="648" font-size="12" fill="#6b6b64">confidence: 0.95 | compression: 74%</text>
+  <text x="628" y="656" font-size="12" fill="#6b6b64">confidence: 0.95 | compression: 65%</text>
 </svg>

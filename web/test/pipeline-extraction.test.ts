@@ -40,6 +40,17 @@ describe('CompressionPipeline extraction', () => {
     expect(result.acceptanceCriteria.some((a) => a.startsWith('Given'))).toBe(true);
   });
 
+  it('does not mistake prose starting with "When" for a Gherkin scenario', () => {
+    const doc = new NormalizedDocument();
+    doc.key = 'ABC-5';
+    doc.title = 'Booking';
+    doc.description =
+      'When a patient books a visit, the appointment must appear in the EHR so that staff stop re-typing it.';
+
+    const result = run(doc);
+    expect(result.acceptanceCriteria).toEqual([]);
+  });
+
   it('collapses repeated comments into one decision', () => {
     const doc = new NormalizedDocument();
     doc.key = 'ABC-3';

@@ -52,6 +52,20 @@ class PipelineExtractionTest {
     }
 
     @Test
+    void proseStartingWithWhenIsNotAGherkinScenario() {
+        NormalizedDocument doc = new NormalizedDocument();
+        doc.setKey("ABC-5");
+        doc.setTitle("Booking");
+        doc.setDescription("When a patient books a visit, the appointment must appear in the EHR "
+                + "so that staff stop re-typing it.");
+
+        CompressedContext result = run(doc);
+        assertTrue(result.getAcceptanceCriteria().isEmpty(),
+                "single 'When ...' prose sentence must not become an AC: "
+                        + result.getAcceptanceCriteria());
+    }
+
+    @Test
     void collapsesRepeatedComments() {
         NormalizedDocument doc = new NormalizedDocument();
         doc.setKey("ABC-3");

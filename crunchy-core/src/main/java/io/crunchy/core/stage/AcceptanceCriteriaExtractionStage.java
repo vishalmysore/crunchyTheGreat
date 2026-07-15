@@ -5,6 +5,7 @@ import io.crunchy.core.pipeline.PipelineStage;
 import io.crunchy.core.pipeline.ProcessingContext;
 import io.crunchy.core.text.TextUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -68,26 +69,33 @@ public final class AcceptanceCriteriaExtractionStage implements PipelineStage {
         return found;
     }
 
+    /**
+     * A real scenario spans at least two clauses (Given/When/Then). A single
+     * line is ordinary prose that happens to open with "When..." or "And...",
+     * not an acceptance criterion.
+     */
     private boolean extractGherkin(ProcessingContext context, Block block) {
-        StringBuilder scenario = new StringBuilder();
+        List<String> scenario = new ArrayList<>();
         boolean found = false;
         for (String line : block.getText().lines().toList()) {
             if (GHERKIN_LINE.matcher(line).matches()) {
-                if (!scenario.isEmpty()) {
-                    scenario.append(' ');
-                }
-                scenario.append(line.strip().replaceFirst("^[-*]\\s*", ""));
-            } else if (!scenario.isEmpty()) {
-                addUnique(context.getResult().getAcceptanceCriteria(), scenario.toString());
-                scenario.setLength(0);
-                found = true;
+                scenario.add(line.strip().replaceFirst("^[-*]\\s*", ""));
+            } else {
+                found |= flushScenario(context, scenario);
             }
         }
-        if (!scenario.isEmpty()) {
-            addUnique(context.getResult().getAcceptanceCriteria(), scenario.toString());
-            found = true;
-        }
+        found |= flushScenario(context, scenario);
         return found;
+    }
+
+    private boolean flushScenario(ProcessingContext context, List<String> scenario) {
+        boolean emitted = false;
+        if (scenario.size() >= 2) {
+            addUnique(context.getResult().getAcceptanceCriteria(), String.join(" ", scenario));
+            emitted = true;
+        }
+        scenario.clear();
+        return emitted;
     }
 
     private void extractConstraints(ProcessingContext context, Block block) {

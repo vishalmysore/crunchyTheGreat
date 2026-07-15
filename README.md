@@ -26,7 +26,7 @@ Pipeline stages (all deterministic):
 1. **HTML cleaning** — JSoup strips markup, keeps line structure, drops email quotes/signatures
 2. **Noise filter** — removes bot comments, greetings/acks (+1, lgtm, thanks), emoji spam, log dumps
 3. **Block splitting** — paragraph-level units
-4. **Duplicate detection** — word-set Jaccard collapses repeats ("Let's use Kafka" ×3 → 1)
+4. **Duplicate detection** — word-set Jaccard collapses repeats ("Let's use FHIR R4" ×3 → 1)
 5. **Decision extraction** — technology choices *and rejections* ("rejected RabbitMQ")
 6. **Acceptance criteria** — AC/DoD sections, Given/When/Then, checkbox lists; must/should → constraints
 7. **TODO extraction** — TODO/FIXME/follow-up/still-need-to
@@ -42,14 +42,14 @@ or Azure DevOps:
 
 ```json
 {
-  "issue": "PAY-1421 Implement asynchronous payment notification service",
+  "issue": "CARE-2087 Sync telehealth appointments to the EHR via FHIR",
   "summary": "...",
   "businessGoal": "...",
   "architecture": [], "decisions": [], "constraints": [],
   "acceptanceCriteria": [], "risks": [], "todos": [],
   "dependencies": [], "relatedIssues": [], "ignoredContent": [],
   "confidence": 0.95,
-  "compressionRatio": 0.70
+  "compressionRatio": 0.65
 }
 ```
 
@@ -68,7 +68,7 @@ Requires JDK 17+ and Maven.
 ```
 mvn package
 java -jar crunchy-cli/target/crunchy-cli-0.1.0-SNAPSHOT.jar \
-    -i samples/messy-issue.json -f markdown -l tiny
+    -i samples/healthcare-issue.json -f markdown -l tiny
 ```
 
 Options:
@@ -87,11 +87,20 @@ except detected noise.
 
 ## Try it
 
-`samples/messy-issue.json` is a deliberately messy issue: HTML formatting,
-three duplicate "use Kafka" comments, two bot messages, a 1.8 KB stack-trace
-dump, greetings and emoji. The pipeline turns it into the compact context
-shown above at **70% reduction (tiny)** while keeping every decision,
-rejection, acceptance criterion, risk, TODO and the PLAT-77 blocker.
+[**Live demo →**](https://vishalmysore.github.io/crunchyTheGreat/)
+
+`samples/` ships deliberately messy issues across three software domains:
+
+| Sample | Domain | Ticket |
+| --- | --- | --- |
+| `healthcare-issue.json` | Healthcare | telehealth → EHR sync via FHIR (HIPAA/PHI) |
+| `insurance-issue.json` | Insurance | claims adjudication rules engine |
+| `logistics-issue.json` | Logistics | shipment tracking from carrier webhooks |
+
+Each has HTML formatting, duplicated decisions, bot messages, a stack-trace
+dump and greetings. The healthcare ticket compresses **41% at full fidelity
+and 65% at tiny** while keeping every decision, rejection, acceptance
+criterion, risk, TODO and the EHR-14 blocker.
 
 ## Extending
 

@@ -8,11 +8,9 @@ import { CompressionPipeline } from '../src/core/pipeline/CompressionPipeline.js
 /**
  * Every bundled demo ticket must parse and compress into a useful CIR. This
  * guards against a hand-authored sample whose phrasing quietly stops matching
- * the extractors. Domains are intentionally non-finance (healthcare, insurance,
- * logistics, plus the generic payments webhook example).
+ * the extractors. Domains are intentionally non-finance.
  */
 const SAMPLES = [
-  'messy-issue.json',
   'healthcare-issue.json',
   'insurance-issue.json',
   'logistics-issue.json',

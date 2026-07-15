@@ -1,5 +1,5 @@
 ---
-title: "Stop Feeding Your AI Coding Agent Raw Jira Tickets. Compress Them 74% First."
+title: "Stop Feeding Your AI Coding Agent Raw Jira Tickets. Compress Them 65% First."
 published: false
 description: "A real Jira ticket is 80% noise — bot messages, duplicate debates, stack traces, greetings. CrunchyTheGreat strips it to a clean, structured brief 70–95% smaller, deterministically, 100% in your browser. No server. No LLM. Open source."
 tags: ai, jira, webdev, opensource
@@ -8,7 +8,7 @@ canonical_url: https://github.com/vishalmysore/crunchyTheGreat
 ---
 
 <p align="center">
-  <img src="docs/hero.svg" alt="CrunchyTheGreat — compress messy Jira tickets 74% smaller before your AI coding agent reads them" width="920">
+  <img src="docs/hero.svg" alt="CrunchyTheGreat — compress messy Jira tickets 65% smaller before your AI coding agent reads them" width="920">
 </p>
 
 <p align="center">
@@ -30,7 +30,7 @@ Here's a dirty secret of AI-assisted engineering. When you paste a Jira ticket i
 | 45 KB epic description | The acceptance criteria |
 | 500 KB of attached logs | The one open blocker |
 | Bot messages, `+1`, "thanks!" | Nothing |
-| The same "let's use Kafka" said 3 times | Once |
+| The same "let's use FHIR R4" said 3 times | Once |
 
 Only **10–20%** of a typical ticket carries engineering signal. The rest is tax — paid in tokens, latency, dollars, and worst of all **answer quality**, because the good stuff gets buried in the noise and the model's attention gets diluted.
 
@@ -41,44 +41,49 @@ There's a better way, and it doesn't involve a model at all.
 ## What if the ticket compressed itself?
 
 <p align="center">
-  <img src="docs/app-demo.svg" alt="CrunchyTheGreat web app: a messy 12-comment Jira issue compressed to a clean structured brief, 74% smaller, in 6 milliseconds" width="960">
+  <img src="docs/app-demo.svg" alt="CrunchyTheGreat web app: a messy 12-comment healthcare Jira issue compressed to a clean structured brief, 65% smaller, in milliseconds" width="960">
 </p>
 
-Paste a Jira export on the left. Get a clean, structured brief on the right. **74% fewer tokens, in single-digit milliseconds, and nothing leaves your browser tab.**
+Paste a Jira export on the left. Get a clean, structured brief on the right. **65% fewer tokens, in single-digit milliseconds, and nothing leaves your browser tab.**
 
-That example is one of four bundled (synthetic) tickets — spanning **payments, healthcare, insurance and logistics** — each a realistic mess: 12 comments, an HTML-formatted description, a **stack trace** someone dumped in a comment, three separate people repeating the same decision, two bot messages, and a "Thanks!" at the end.
+That example is one of three bundled (synthetic) tickets — spanning **healthcare, insurance and logistics** — each a realistic mess: 12 comments, an HTML-formatted description, a **stack trace** someone dumped in a comment, three separate people repeating the same decision, two bot messages, and a "Thanks!" at the end.
 
 Here's what Crunchy keeps — and just as importantly, what it throws away:
 
 ```json
 {
-  "issue": "PAY-1421 Implement asynchronous payment notification service",
-  "businessGoal": "Merchants stop polling our status API every second.",
+  "issue": "CARE-2087 Sync telehealth appointments to the EHR via FHIR",
+  "businessGoal": "The appointment must appear in the clinician's EHR so that
+                   front-desk staff stop re-typing bookings into Epic by hand.",
   "decisions": [
-    "For the event backbone, let's use Kafka.",
-    "We considered RabbitMQ but rejected it — we already operate Kafka.",
-    "Use Redis for the delivery-attempt cache instead of Memcached."
+    "For the integration, let's use FHIR R4 (the Appointment and Slot resources).",
+    "We considered a custom JSON bridge but rejected it — FHIR gives us Epic and Cerner for free.",
+    "We also decided to use Redis for the OAuth token cache."
   ],
   "acceptanceCriteria": [
-    "Merchant receives a webhook within 5 seconds of a state change",
-    "Failed deliveries retried with exponential backoff up to 24 hours",
-    "All notification payloads are signed with HMAC-SHA256"
+    "A new booking appears in the EHR within 60 seconds",
+    "All patient identifiers (PHI) are encrypted at rest and never written to application logs",
+    "Every sync writes an immutable audit record for HIPAA",
+    "Given a patient books a slot When the FHIR sync worker processes the event Then the clinician sees the appointment in Epic"
   ],
-  "risks": ["Retry storm after a merchant outage could overload the egress proxy"],
-  "dependencies": ["Blocked by PLAT-77 (service-mesh mTLS upgrade)"],
-  "todos": ["Add the merchant sandbox CIDR to the egress allowlist before UAT"],
+  "risks": ["Appointment PHI showing up in logs is a serious HIPAA security risk"],
+  "dependencies": ["Blocked by EHR-14 — the Epic sandbox credentials"],
+  "todos": [
+    "Add retry with exponential backoff for transient FHIR 5xx responses",
+    "Write the PHI data-retention runbook before go-live"
+  ],
   "ignoredContent": [
-    "Log/stack-trace dump removed (1814 chars)",
+    "Log/stack-trace dump removed (784 chars)",
     "2 bot message(s) removed",
     "3 greeting/acknowledgement comment(s) removed",
     "1 duplicate/near-duplicate paragraph(s) collapsed"
   ],
   "confidence": 0.95,
-  "compressionRatio": 0.74
+  "compressionRatio": 0.65
 }
 ```
 
-Notice it kept the **rejected** option (RabbitMQ). Knowing what the team decided *not* to do is exactly as valuable to a coding agent as knowing what they chose — and it's the first thing a naive summarizer drops.
+Notice it kept the **rejected** option (the custom JSON bridge). Knowing what the team decided *not* to do is exactly as valuable to a coding agent as knowing what they chose — and it's the first thing a naive summarizer drops.
 
 ## Why deterministic beats "just ask GPT to summarize"
 
@@ -148,7 +153,7 @@ No. The browser app and the pipeline run entirely client-side. There is no serve
 It's deterministic (same output every time), costs zero tokens to run, works offline, and reports exactly what it removed. An LLM pass is available as an optional enhancement, not a dependency.
 
 **How much smaller are tickets, really?**
-The design target is 70–95%. The bundled sample compresses **58% at Full fidelity and 74% at Tiny** — while preserving every decision, acceptance criterion, risk and blocker.
+The design target is 70–95%. The bundled healthcare ticket compresses **41% at Full fidelity and 65% at Tiny** — while preserving every decision, acceptance criterion, risk and blocker. Noisier real-world tickets (huge log dumps, long duplicate threads) compress considerably harder.
 
 **Which agents does it help?**
 Any token-limited coding agent: Claude Code, Devin, GitHub Copilot, Codex, OpenHands, Cursor — anything you paste ticket context into.

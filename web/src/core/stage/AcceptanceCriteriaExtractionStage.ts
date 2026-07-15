@@ -56,24 +56,28 @@ export class AcceptanceCriteriaExtractionStage implements PipelineStage {
   }
 
   private extractGherkin(context: ProcessingContext, block: Block): boolean {
-    let scenario = '';
+    let scenario: string[] = [];
     let found = false;
-    for (const line of block.text.split(/\r?\n/)) {
-      if (GHERKIN_LINE.test(line)) {
-        if (scenario.length > 0) {
-          scenario += ' ';
-        }
-        scenario += line.trim().replace(/^[-*]\s*/, '');
-      } else if (scenario.length > 0) {
-        this.addUnique(context.result.acceptanceCriteria, scenario);
-        scenario = '';
+
+    // A real scenario spans at least two clauses (Given/When/Then). A single
+    // line is ordinary prose that happens to open with "When…" or "And…", not
+    // an acceptance criterion.
+    const flush = (): void => {
+      if (scenario.length >= 2) {
+        this.addUnique(context.result.acceptanceCriteria, scenario.join(' '));
         found = true;
       }
+      scenario = [];
+    };
+
+    for (const line of block.text.split(/\r?\n/)) {
+      if (GHERKIN_LINE.test(line)) {
+        scenario.push(line.trim().replace(/^[-*]\s*/, ''));
+      } else {
+        flush();
+      }
     }
-    if (scenario.length > 0) {
-      this.addUnique(context.result.acceptanceCriteria, scenario);
-      found = true;
-    }
+    flush();
     return found;
   }
 

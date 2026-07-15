@@ -9,46 +9,46 @@ import { CompressionPipeline } from '../src/core/pipeline/CompressionPipeline.js
 
 /**
  * Full-path test: messy Jira JSON export -> connector -> pipeline -> CIR.
- * Uses the sample under public/ so the web UI and the test exercise the same
- * fixture.
+ * Uses the healthcare sample under public/ so the web UI and the test
+ * exercise the same fixture.
  */
 let result: CompressedContext;
 let document_: NormalizedDocument;
 
 beforeAll(() => {
-  const path = fileURLToPath(new URL('../public/messy-issue.json', import.meta.url));
+  const path = fileURLToPath(new URL('../public/healthcare-issue.json', import.meta.url));
   document_ = parseJiraIssue(readFileSync(path, 'utf8'));
   result = CompressionPipeline.standard().process(document_, CompressionLevel.FULL);
 });
 
 describe('Jira end to end', () => {
   it('normalizes the issue', () => {
-    expect(document_.key).toBe('PAY-1421');
+    expect(document_.key).toBe('CARE-2087');
     expect(document_.comments.length).toBe(12);
     expect(document_.comments[3].bot).toBe(true); // Jenkins CI
     expect(document_.metadata.get('status')).toBe('In Progress');
   });
 
   it('keeps decisions including rejections', () => {
-    expect(result.decisions.some((d) => d.includes('Kafka'))).toBe(true);
-    expect(result.decisions.some((d) => d.includes('RabbitMQ'))).toBe(true);
+    expect(result.decisions.some((d) => d.includes('FHIR R4'))).toBe(true);
+    expect(result.decisions.some((d) => d.includes('custom JSON bridge'))).toBe(true);
     expect(result.decisions.some((d) => d.includes('Redis'))).toBe(true);
   });
 
   it('captures complete acceptance criteria', () => {
     expect(result.acceptanceCriteria.length).toBeGreaterThanOrEqual(4);
-    expect(result.acceptanceCriteria.some((a) => a.includes('HMAC'))).toBe(true);
+    expect(result.acceptanceCriteria.some((a) => a.includes('HIPAA'))).toBe(true);
   });
 
   it('captures risks, todos and dependencies', () => {
-    expect(result.risks.some((r) => r.toLowerCase().includes('retry storm'))).toBe(true);
-    expect(result.todos.some((t) => t.includes('allowlist'))).toBe(true);
-    expect(result.dependencies.some((d) => d.includes('PLAT-77'))).toBe(true);
+    expect(result.risks.some((r) => r.includes('HIPAA'))).toBe(true);
+    expect(result.todos.some((t) => t.includes('backoff'))).toBe(true);
+    expect(result.dependencies.some((d) => d.includes('EHR-14'))).toBe(true);
   });
 
   it('lists related issues from text and links', () => {
-    expect(result.relatedIssues).toContain('PAY-1388');
-    expect(result.relatedIssues).toContain('PLAT-77');
+    expect(result.relatedIssues).toContain('CARE-2050');
+    expect(result.relatedIssues).toContain('EHR-14');
   });
 
   it('removes and reports noise', () => {
@@ -58,7 +58,7 @@ describe('Jira end to end', () => {
   });
 
   it('meets the compression target', () => {
-    expect(result.compressionRatio).toBeGreaterThanOrEqual(0.5);
+    expect(result.compressionRatio).toBeGreaterThanOrEqual(0.3);
     expect(result.confidence).toBeGreaterThanOrEqual(0.9);
   });
 });

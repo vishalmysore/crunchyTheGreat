@@ -25,8 +25,8 @@ web/
   src/cli.ts        Node CLI (no deps)
   src/main.ts       browser UI entry
   test/             vitest suite (41 tests, incl. per-sample smoke tests)
-  public/           demo tickets across domains (payments, healthcare,
-                    insurance, logistics), shared by the UI and tests
+  public/           demo tickets across domains (healthcare, insurance,
+                    logistics), shared by the UI and tests
 ```
 
 ## Develop
@@ -41,7 +41,7 @@ npm run build      # tsc typecheck + Vite production build to dist/
 ## CLI
 
 ```
-npx tsx src/cli.ts -i public/messy-issue.json -f markdown -l tiny
+npx tsx src/cli.ts -i public/healthcare-issue.json -f markdown -l tiny
 ```
 
 Options mirror the Java CLI: `-i/--input`, `-s/--source` (jira|text),

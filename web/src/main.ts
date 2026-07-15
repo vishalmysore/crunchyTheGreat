@@ -21,7 +21,6 @@ const sampleNameEl = $<HTMLSelectElement>('sampleName');
 
 /** Bundled demo tickets across different (non-finance) software domains. */
 const SAMPLES: ReadonlyArray<{ file: string; label: string }> = [
-  { file: 'messy-issue.json', label: 'Payments · webhook notifications' },
   { file: 'healthcare-issue.json', label: 'Healthcare · FHIR / EHR sync' },
   { file: 'insurance-issue.json', label: 'Insurance · claims adjudication' },
   { file: 'logistics-issue.json', label: 'Logistics · shipment tracking' },
