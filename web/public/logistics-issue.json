@@ -1,0 +1,32 @@
+{
+  "key": "SHIP-990",
+  "fields": {
+    "summary": "Real-time shipment tracking from carrier webhooks",
+    "issuetype": { "name": "Story" },
+    "status": { "name": "In Progress" },
+    "priority": { "name": "High" },
+    "assignee": { "displayName": "Mara Voss" },
+    "labels": ["tracking", "webhooks", "carriers"],
+    "description": "<p>Customers keep calling support to ask \"where is my order\". We want to push live shipment status to the customer the moment a carrier reports it <b>so that</b> support volume drops and customers stop worrying.</p><h3>Acceptance Criteria</h3><ul><li>A status change is pushed to the customer within 30 seconds of the carrier event</li><li>Duplicate carrier callbacks are de-duplicated, so customers never see a status flap</li><li>Inbound carrier webhooks are signature-verified before processing</li></ul><p>Given FedEx sends a delivered event<br/>When the tracking service processes it<br/>Then the customer receives exactly one delivered notification</p><p>The service must handle 5000 carrier events per second at peak. See SHIP-880 for the event schema.</p>",
+    "issuelinks": [
+      { "outwardIssue": { "key": "SHIP-880" } },
+      { "inwardIssue": { "key": "PLAT-31" } }
+    ],
+    "comment": {
+      "comments": [
+        { "author": { "displayName": "Owen Reyes" }, "created": "2026-06-23T09:00:00.000+0000", "body": "hey all" },
+        { "author": { "displayName": "Owen Reyes" }, "created": "2026-06-23T09:04:00.000+0000", "body": "For ingestion, let's use SQS FIFO queues per carrier. It gives us ordering and back-pressure without running our own broker." },
+        { "author": { "displayName": "Mara Voss" }, "created": "2026-06-23T10:10:00.000+0000", "body": "<p>Agree. Let's use SQS FIFO queues.</p>" },
+        { "author": { "displayName": "Jenkins CI" }, "created": "2026-06-23T10:12:00.000+0000", "body": "Build #560 succeeded." },
+        { "author": { "displayName": "Raj Mehta" }, "created": "2026-06-24T08:20:00.000+0000", "body": "We considered polling the carrier tracking APIs but rejected it — it is too slow and we hit rate limits. We decided to use DynamoDB with a TTL to store idempotency keys for de-duplication." },
+        { "author": { "displayName": "Mara Voss" }, "created": "2026-06-24T09:00:00.000+0000", "body": "A scalability concern: FedEx replays webhooks on their side, so without idempotency keys customers get duplicate notifications. That's the whole point of the dedupe.\n\nThis is blocked by PLAT-31, the shared webhook-signature library — we should not roll our own crypto." },
+        { "author": { "displayName": "Owen Reyes" }, "created": "2026-06-24T09:30:00.000+0000", "body": "+1" },
+        { "author": { "displayName": "Dana Ruiz" }, "created": "2026-06-25T18:05:00.000+0000", "body": "Hit this in staging during the load test:\n\n2026-06-25 18:03:11 ERROR CarrierWebhookConsumer - failed to verify signature for shipment s-7781\njava.security.SignatureException: signature length mismatch\n\tat io.ship.tracking.security.WebhookVerifier.verify(WebhookVerifier.java:41)\n\tat io.ship.tracking.CarrierWebhookConsumer.handle(CarrierWebhookConsumer.java:96)\n\tat io.ship.tracking.CarrierWebhookConsumer.run(CarrierWebhookConsumer.java:63)\n2026-06-25 18:03:11 WARN CarrierWebhookConsumer - dropping event s-7781 to the dead-letter queue\n2026-06-25 18:03:12 ERROR CarrierWebhookConsumer - failed to verify signature for shipment s-7782" },
+        { "author": { "displayName": "Raj Mehta" }, "created": "2026-06-25T19:10:00.000+0000", "body": "That's a stale staging secret, not a code bug. TODO: rotate the carrier webhook signing secret before go-live.\n\nWe still need a dead-letter queue consumer for events we cannot parse." },
+        { "author": { "displayName": "Automation for Jira" }, "created": "2026-06-25T19:11:00.000+0000", "body": "Branch feature/SHIP-990-tracking was created." },
+        { "author": { "displayName": "Mara Voss" }, "created": "2026-06-26T11:00:00.000+0000", "body": "Let's use SQS FIFO queues." },
+        { "author": { "displayName": "Owen Reyes" }, "created": "2026-06-26T11:15:00.000+0000", "body": "Thanks!" }
+      ]
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "key": "CLM-4412",
+  "fields": {
+    "summary": "Automate first-pass claims adjudication with a rules engine",
+    "issuetype": { "name": "Story" },
+    "status": { "name": "In Progress" },
+    "priority": { "name": "High" },
+    "assignee": { "displayName": "Grace Liu" },
+    "labels": ["claims", "adjudication", "rules-engine"],
+    "description": "<p>Adjusters are manually reviewing every incoming claim, including the routine ones. We want the system to auto-approve clean claims <b>so that</b> adjusters only spend time on exceptions and fraud.</p><h3>Acceptance Criteria</h3><ul><li>A clean claim is auto-adjudicated in under 2 seconds</li><li>Every decision writes a full audit trail of which rules fired</li><li>Claims that look fraudulent are flagged, never auto-paid</li></ul><p>Given a claim that passes all validation rules<br/>When the adjudication engine evaluates it<br/>Then the claim is auto-approved and the payout is scheduled</p><p>The engine must comply with state prompt-pay regulations. See CLM-4300 for the rule catalog.</p>",
+    "issuelinks": [
+      { "outwardIssue": { "key": "CLM-4300" } },
+      { "inwardIssue": { "key": "ACT-22" } }
+    ],
+    "comment": {
+      "comments": [
+        { "author": { "displayName": "Diego Alvarez" }, "created": "2026-06-18T09:00:00.000+0000", "body": "Hello team" },
+        { "author": { "displayName": "Diego Alvarez" }, "created": "2026-06-18T09:05:00.000+0000", "body": "For the rules, let's use Drools. Business analysts can edit the DRL rules without waiting for a deploy." },
+        { "author": { "displayName": "Grace Liu" }, "created": "2026-06-18T10:30:00.000+0000", "body": "<p>Agree. Let's use Drools.</p>" },
+        { "author": { "displayName": "Jenkins CI" }, "created": "2026-06-18T10:35:00.000+0000", "body": "Build #1203 passed." },
+        { "author": { "displayName": "Priya Nair" }, "created": "2026-06-19T08:15:00.000+0000", "body": "We considered hardcoding the rules in Java but rejected it — every rate change would need a release. We decided to use Kafka to stream claim events into the engine so we can replay them." },
+        { "author": { "displayName": "Grace Liu" }, "created": "2026-06-19T09:20:00.000+0000", "body": "A real performance risk: complex multi-line claims could blow the 2s SLA under peak load. We should cap rule-set complexity per claim type.\n\nThis is blocked by ACT-22, the actuarial rating-table service — without it we cannot compute allowed amounts." },
+        { "author": { "displayName": "Diego Alvarez" }, "created": "2026-06-19T09:45:00.000+0000", "body": "+1" },
+        { "author": { "displayName": "Tom Aldana" }, "created": "2026-06-20T09:15:00.000+0000", "body": "Reproduced this in staging:\n\n2026-06-20 09:14:33 ERROR AdjudicationEngine - rule evaluation failed for claim c-33219\njava.lang.NumberFormatException: For input string: \"N/A\"\n\tat java.base/java.lang.Long.parseLong(Long.java:711)\n\tat io.claims.rules.ClaimFacts.getAllowedAmount(ClaimFacts.java:52)\n\tat org.drools.core.rule.Declaration.getValue(Declaration.java:239)\n\tat io.claims.rules.AdjudicationEngine.evaluate(AdjudicationEngine.java:88)\n\tat io.claims.rules.AdjudicationEngine.run(AdjudicationEngine.java:51)\n2026-06-20 09:14:33 WARN AdjudicationEngine - routing claim c-33219 to manual review" },
+        { "author": { "displayName": "Priya Nair" }, "created": "2026-06-20T10:40:00.000+0000", "body": "That's a malformed test claim with a missing amount. TODO: add JSON-schema validation on the claim intake endpoint so garbage never reaches the engine.\n\nWe still need to add the fraud-model feature flag before we enable auto-approve in production." },
+        { "author": { "displayName": "Automation for Jira" }, "created": "2026-06-20T10:41:00.000+0000", "body": "Branch feature/CLM-4412-rules-engine was created." },
+        { "author": { "displayName": "Grace Liu" }, "created": "2026-06-21T11:00:00.000+0000", "body": "Let's use Drools." },
+        { "author": { "displayName": "Diego Alvarez" }, "created": "2026-06-21T11:15:00.000+0000", "body": "Thanks!" }
+      ]
+    }
+  }
+}

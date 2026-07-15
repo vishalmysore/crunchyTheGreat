@@ -1,0 +1,32 @@
+{
+  "key": "CARE-2087",
+  "fields": {
+    "summary": "Sync telehealth appointments to the EHR via FHIR",
+    "issuetype": { "name": "Story" },
+    "status": { "name": "In Progress" },
+    "priority": { "name": "High" },
+    "assignee": { "displayName": "Dr. Lena Park" },
+    "labels": ["telehealth", "fhir", "ehr"],
+    "description": "<p>When a patient books a telehealth visit in our app, the appointment must appear in the clinician's EHR <b>so that</b> front-desk staff stop re-typing bookings into Epic by hand.</p><p>Manual double-entry is causing scheduling errors and no-shows.</p><h3>Acceptance Criteria</h3><ul><li>A new booking appears in the EHR within 60 seconds</li><li>All patient identifiers (PHI) are encrypted at rest and never written to application logs</li><li>Every sync writes an immutable audit record for HIPAA</li></ul><p>Given a patient books a slot<br/>When the FHIR sync worker processes the event<br/>Then the clinician sees the appointment in Epic with the correct provider</p><p>The integration must not lose appointments during a deploy. See CARE-2050 for the canonical data model.</p>",
+    "issuelinks": [
+      { "outwardIssue": { "key": "CARE-2050" } },
+      { "inwardIssue": { "key": "EHR-14" } }
+    ],
+    "comment": {
+      "comments": [
+        { "author": { "displayName": "Sam Okafor" }, "created": "2026-06-10T09:00:00.000+0000", "body": "Hi team!" },
+        { "author": { "displayName": "Sam Okafor" }, "created": "2026-06-10T09:02:00.000+0000", "body": "For the integration, let's use FHIR R4 (the Appointment and Slot resources). Epic and Cerner both already speak it." },
+        { "author": { "displayName": "Dr. Lena Park" }, "created": "2026-06-10T10:15:00.000+0000", "body": "<p>Agree. Let's use FHIR R4.</p>" },
+        { "author": { "displayName": "Jenkins CI" }, "created": "2026-06-10T10:20:00.000+0000", "body": "Build #812 succeeded. Artifacts pushed to registry." },
+        { "author": { "displayName": "Raj Mehta" }, "created": "2026-06-11T08:30:00.000+0000", "body": "We considered a custom JSON bridge but rejected it — FHIR gives us Epic and Cerner for free and it is the standard.\n\nWe also decided to use Redis for the OAuth token cache instead of calling the auth server on every request." },
+        { "author": { "displayName": "Dr. Lena Park" }, "created": "2026-06-11T09:12:00.000+0000", "body": "One concern: appointment PHI showing up in logs is a serious HIPAA security risk. We must scrub patient identifiers before anything is logged.\n\nAlso this is blocked by EHR-14 — we cannot test until the Epic sandbox credentials are provisioned." },
+        { "author": { "displayName": "Sam Okafor" }, "created": "2026-06-11T09:40:00.000+0000", "body": "+1" },
+        { "author": { "displayName": "Priya Nair" }, "created": "2026-06-12T14:25:00.000+0000", "body": "Saw this in the sandbox while testing the worker:\n\n2026-06-12 14:22:07 ERROR FhirSyncWorker - appointment sync failed for patient p-8842\nca.uhn.fhir.rest.client.exceptions.FhirClientConnectionException: Failed to retrieve the server metadata\n\tat ca.uhn.fhir.rest.client.impl.BaseClient.invokeClient(BaseClient.java:283)\n\tat ca.uhn.fhir.rest.client.impl.GenericClient.conformance(GenericClient.java:412)\n\tat io.care.telehealth.sync.FhirSyncWorker.run(FhirSyncWorker.java:74)\nCaused by: java.net.SocketTimeoutException: connect timed out\n\tat java.base/sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:546)\n\tat java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:946)\n2026-06-12 14:22:09 WARN FhirSyncWorker - scheduling retry 1/5 for patient p-8842" },
+        { "author": { "displayName": "Raj Mehta" }, "created": "2026-06-12T15:30:00.000+0000", "body": "That's just the sandbox being down overnight, not our code. TODO: add retry with exponential backoff for transient FHIR 5xx responses.\n\nWe still need to write the PHI data-retention runbook before go-live." },
+        { "author": { "displayName": "Automation for Jira" }, "created": "2026-06-12T15:31:00.000+0000", "body": "Branch feature/CARE-2087-fhir-sync was created." },
+        { "author": { "displayName": "Dr. Lena Park" }, "created": "2026-06-13T11:00:00.000+0000", "body": "Let's use FHIR R4." },
+        { "author": { "displayName": "Sam Okafor" }, "created": "2026-06-13T11:20:00.000+0000", "body": "Thanks!" }
+      ]
+    }
+  }
+}

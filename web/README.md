@@ -24,8 +24,9 @@ web/
   src/connector/    Jira REST v2 JSON -> NormalizedDocument
   src/cli.ts        Node CLI (no deps)
   src/main.ts       browser UI entry
-  test/             vitest ports of the 17 Java tests
-  public/           messy-issue.json sample (shared by UI and tests)
+  test/             vitest suite (41 tests, incl. per-sample smoke tests)
+  public/           demo tickets across domains (payments, healthcare,
+                    insurance, logistics), shared by the UI and tests
 ```
 
 ## Develop

@@ -1,0 +1,169 @@
+---
+title: "Stop Feeding Your AI Coding Agent Raw Jira Tickets. Compress Them 74% First."
+published: false
+description: "A real Jira ticket is 80% noise — bot messages, duplicate debates, stack traces, greetings. CrunchyTheGreat strips it to a clean, structured brief 70–95% smaller, deterministically, 100% in your browser. No server. No LLM. Open source."
+tags: ai, jira, webdev, opensource
+cover_image: https://raw.githubusercontent.com/vishalmysore/crunchyTheGreat/main/docs/hero.svg
+canonical_url: https://github.com/vishalmysore/crunchyTheGreat
+---
+
+<p align="center">
+  <img src="docs/hero.svg" alt="CrunchyTheGreat — compress messy Jira tickets 74% smaller before your AI coding agent reads them" width="920">
+</p>
+
+<p align="center">
+  <strong><a href="https://vishalmysore.github.io/crunchyTheGreat/">🚀 Try the live demo</a></strong> &nbsp;·&nbsp;
+  <a href="https://github.com/vishalmysore/crunchyTheGreat">⭐ Star on GitHub</a>
+</p>
+
+> **TL;DR** — Enterprise Jira tickets are ~80% noise. Your AI agent (Claude Code, Devin, Copilot, Codex, OpenHands) burns thousands of tokens reading bot spam, duplicate arguments, stack traces and "thanks!" comments before it finds the one architecture decision that actually matters. **CrunchyTheGreat** is an open-source engine that compresses a ticket **70–95%** *before* the agent ever sees it — deterministically, with **no LLM**, running **entirely in your browser**.
+
+---
+
+## The problem nobody budgets for: context bloat
+
+Here's a dirty secret of AI-assisted engineering. When you paste a Jira ticket into your coding agent, this is what it actually reads:
+
+| What's in the ticket | What the agent needs |
+| --- | --- |
+| 180 KB of comments | The 2 architecture decisions |
+| 45 KB epic description | The acceptance criteria |
+| 500 KB of attached logs | The one open blocker |
+| Bot messages, `+1`, "thanks!" | Nothing |
+| The same "let's use Kafka" said 3 times | Once |
+
+Only **10–20%** of a typical ticket carries engineering signal. The rest is tax — paid in tokens, latency, dollars, and worst of all **answer quality**, because the good stuff gets buried in the noise and the model's attention gets diluted.
+
+You *could* ask an LLM to summarize the ticket first. But now you're paying an LLM to read the noise so a second LLM can read a smaller version of it — and summarization is non-deterministic, so the same ticket gives you a different brief every run. Sometimes it quietly drops the one constraint that mattered.
+
+There's a better way, and it doesn't involve a model at all.
+
+## What if the ticket compressed itself?
+
+<p align="center">
+  <img src="docs/app-demo.svg" alt="CrunchyTheGreat web app: a messy 12-comment Jira issue compressed to a clean structured brief, 74% smaller, in 6 milliseconds" width="960">
+</p>
+
+Paste a Jira export on the left. Get a clean, structured brief on the right. **74% fewer tokens, in single-digit milliseconds, and nothing leaves your browser tab.**
+
+That example is one of four bundled (synthetic) tickets — spanning **payments, healthcare, insurance and logistics** — each a realistic mess: 12 comments, an HTML-formatted description, a **stack trace** someone dumped in a comment, three separate people repeating the same decision, two bot messages, and a "Thanks!" at the end.
+
+Here's what Crunchy keeps — and just as importantly, what it throws away:
+
+```json
+{
+  "issue": "PAY-1421 Implement asynchronous payment notification service",
+  "businessGoal": "Merchants stop polling our status API every second.",
+  "decisions": [
+    "For the event backbone, let's use Kafka.",
+    "We considered RabbitMQ but rejected it — we already operate Kafka.",
+    "Use Redis for the delivery-attempt cache instead of Memcached."
+  ],
+  "acceptanceCriteria": [
+    "Merchant receives a webhook within 5 seconds of a state change",
+    "Failed deliveries retried with exponential backoff up to 24 hours",
+    "All notification payloads are signed with HMAC-SHA256"
+  ],
+  "risks": ["Retry storm after a merchant outage could overload the egress proxy"],
+  "dependencies": ["Blocked by PLAT-77 (service-mesh mTLS upgrade)"],
+  "todos": ["Add the merchant sandbox CIDR to the egress allowlist before UAT"],
+  "ignoredContent": [
+    "Log/stack-trace dump removed (1814 chars)",
+    "2 bot message(s) removed",
+    "3 greeting/acknowledgement comment(s) removed",
+    "1 duplicate/near-duplicate paragraph(s) collapsed"
+  ],
+  "confidence": 0.95,
+  "compressionRatio": 0.74
+}
+```
+
+Notice it kept the **rejected** option (RabbitMQ). Knowing what the team decided *not* to do is exactly as valuable to a coding agent as knowing what they chose — and it's the first thing a naive summarizer drops.
+
+## Why deterministic beats "just ask GPT to summarize"
+
+This is the core bet, so it's worth being blunt about it:
+
+- **Same input → same output. Every time.** No temperature, no drift, no "why did the brief change between runs?" You can diff it, cache it, and trust it in CI.
+- **Zero token cost to compress.** The pipeline is regex, text similarity and ranking — not a model. You spend tokens *once*, on the small clean brief, in the agent that does the actual work.
+- **It runs offline.** No ticket data is shipped to a third-party API just to be shortened. For enterprise Jira behind a firewall, that's not a nice-to-have, it's the whole ballgame.
+- **It's auditable.** Every dropped paragraph is *reported* in `ignoredContent`, so you can see exactly what was removed and why. Nothing vanishes silently.
+
+An optional LLM pass is still supported for teams that want prose polish — but it's a layer *on top* of a brief that's already 80% smaller, not a substitute for one.
+
+## Under the hood: 10 stages, no magic
+
+<p align="center">
+  <img src="docs/pipeline.svg" alt="The CrunchyTheGreat deterministic pipeline: HTML clean, noise filter, split, deduplicate, then extract decisions, acceptance criteria, TODOs, risks, then rank and assemble the CIR" width="960">
+</p>
+
+Each stage does one small, testable thing:
+
+1. **HTML clean** — strip markup, email quotes, signatures.
+2. **Noise filter** — drop bot messages, `+1`/`lgtm`/"thanks", emoji-only comments, and raw log dumps.
+3. **Split** — break content into paragraph-level blocks.
+4. **Deduplicate** — collapse "let's use Kafka" ×3 into one (repetition becomes a ranking *signal*, not clutter).
+5–8. **Extract** — decisions (including rejections), acceptance criteria (sections, Gherkin `Given/When/Then`, checklists), TODOs, and risks/dependencies/blockers.
+9. **Rank** — every block gets a value score; anything below your chosen threshold is dropped.
+10. **Assemble** — emit the structured output with a confidence score and the measured compression ratio.
+
+Four compression levels let you dial it in: **Tiny** (~90% smaller, decisions + criteria only), **Small**, **Medium**, and **Full** (keep everything except detected noise).
+
+## The real unlock: one context format for every tool
+
+The output isn't just "a smaller ticket." It's a **CIR — Context Intermediate Representation**: a standardized, source-agnostic JSON contract.
+
+That means the *same* compressed shape can come from Jira today, and from GitHub Issues, Confluence, or Azure DevOps tomorrow — and any agent consumes it identically. Connectors on one side, a compression pipeline in the middle, a portable CIR on the other. That separation is what turns this from "a Jira utility" into **context infrastructure** for AI agents.
+
+## It runs in your browser. Really.
+
+The whole thing is a **zero-runtime-dependency TypeScript** build — about **7 KB gzipped**. No backend, no API keys, no upload. Open the tab, paste, compress. Your ticket never touches a server.
+
+There's a **Java** reference implementation too (Spring-friendly, for JVM shops), plus a **Node CLI**:
+
+```bash
+npx tsx src/cli.ts -i ticket.json -f markdown -l tiny
+```
+
+Both share the same pipeline, the same CIR schema, and the same test suite.
+
+## Try it in 10 seconds
+
+1. Open **[the live demo](https://vishalmysore.github.io/crunchyTheGreat/)**
+2. Pick a **domain sample** — payments, healthcare (FHIR/EHR), insurance (claims), or logistics (shipment tracking) — and hit **Load**
+3. Watch a messy 12-comment ticket collapse into a clean brief — and switch the **Level** from Full to Tiny to trade fidelity for size.
+
+Then paste one of your *own* tickets. (It's all client-side — nothing is sent anywhere.)
+
+If it saves you tokens, **[give it a ⭐ on GitHub](https://github.com/vishalmysore/crunchyTheGreat)** — it genuinely helps other engineers find it.
+
+---
+
+## FAQ
+
+**Does CrunchyTheGreat send my Jira data anywhere?**
+No. The browser app and the pipeline run entirely client-side. There is no server and no external API call in the default (deterministic) path.
+
+**How is this different from an LLM summary?**
+It's deterministic (same output every time), costs zero tokens to run, works offline, and reports exactly what it removed. An LLM pass is available as an optional enhancement, not a dependency.
+
+**How much smaller are tickets, really?**
+The design target is 70–95%. The bundled sample compresses **58% at Full fidelity and 74% at Tiny** — while preserving every decision, acceptance criterion, risk and blocker.
+
+**Which agents does it help?**
+Any token-limited coding agent: Claude Code, Devin, GitHub Copilot, Codex, OpenHands, Cursor — anything you paste ticket context into.
+
+**Is it open source?**
+Yes. Java + TypeScript, on [GitHub](https://github.com/vishalmysore/crunchyTheGreat). Contributions and new source connectors welcome.
+
+**What's on the roadmap?**
+Confluence and GitHub-Issues connectors, linked-issue expansion, attachment parsing, and a REST API — all emitting the same CIR.
+
+---
+
+<p align="center"><em>Built for engineers who'd rather their AI agent spent its context window on the code, not the "thanks!" comments.</em></p>
+
+<p align="center">
+  <a href="https://vishalmysore.github.io/crunchyTheGreat/">Live demo</a> ·
+  <a href="https://github.com/vishalmysore/crunchyTheGreat">GitHub</a>
+</p>

@@ -17,6 +17,22 @@ const copyBtn = $<HTMLButtonElement>('copy');
 const sourceEl = $<HTMLSelectElement>('source');
 const levelEl = $<HTMLSelectElement>('level');
 const formatEl = $<HTMLSelectElement>('format');
+const sampleNameEl = $<HTMLSelectElement>('sampleName');
+
+/** Bundled demo tickets across different (non-finance) software domains. */
+const SAMPLES: ReadonlyArray<{ file: string; label: string }> = [
+  { file: 'messy-issue.json', label: 'Payments · webhook notifications' },
+  { file: 'healthcare-issue.json', label: 'Healthcare · FHIR / EHR sync' },
+  { file: 'insurance-issue.json', label: 'Insurance · claims adjudication' },
+  { file: 'logistics-issue.json', label: 'Logistics · shipment tracking' },
+];
+
+for (const s of SAMPLES) {
+  const opt = document.createElement('option');
+  opt.value = s.file;
+  opt.textContent = s.label;
+  sampleNameEl.appendChild(opt);
+}
 
 /** Rough token estimate: ~4 chars per token, the common rule of thumb. */
 const tokens = (chars: number): number => Math.round(chars / 4);
@@ -81,7 +97,8 @@ function compress(): void {
 }
 
 async function loadSample(): Promise<void> {
-  const res = await fetch(`${import.meta.env.BASE_URL}messy-issue.json`);
+  const file = sampleNameEl.value || SAMPLES[0].file;
+  const res = await fetch(`${import.meta.env.BASE_URL}${file}`);
   inputEl.value = await res.text();
   sourceEl.value = 'jira';
   updateInputSize();
@@ -96,6 +113,7 @@ async function copyOutput(): Promise<void> {
 
 $<HTMLButtonElement>('compress').addEventListener('click', compress);
 $<HTMLButtonElement>('sample').addEventListener('click', () => void loadSample());
+sampleNameEl.addEventListener('change', () => void loadSample());
 copyBtn.addEventListener('click', () => void copyOutput());
 inputEl.addEventListener('input', updateInputSize);
 [levelEl, formatEl, sourceEl].forEach((el) =>

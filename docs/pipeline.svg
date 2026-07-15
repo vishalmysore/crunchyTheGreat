@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 470" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <rect width="1200" height="470" rx="16" fill="#1a1a1e"/>
+  <rect x="0" y="0" width="1200" height="6" rx="3" fill="#fb923c"/>
+
+  <text x="60" y="62" font-size="27" font-weight="800" fill="#ffffff">The deterministic pipeline — 10 stages, zero LLM calls</text>
+  <text x="60" y="94" font-size="16" fill="#9a9aa2">Same ticket in, same compressed brief out — every single time.</text>
+
+  <!-- chips -->
+  <g>
+    <!-- row 1 -->
+    <g transform="translate(60,140)">
+      <rect width="196" height="90" rx="12" fill="#26262b" stroke="#33333a"/>
+      <circle cx="30" cy="30" r="16" fill="#fb923c"/><text x="30" y="35" font-size="15" font-weight="800" fill="#141417" text-anchor="middle">1</text>
+      <text x="24" y="66" font-size="16" font-weight="600" fill="#ececec">HTML clean</text>
+    </g>
+    <g transform="translate(284,140)">
+      <rect width="196" height="90" rx="12" fill="#26262b" stroke="#33333a"/>
+      <circle cx="30" cy="30" r="16" fill="#fb923c"/><text x="30" y="35" font-size="15" font-weight="800" fill="#141417" text-anchor="middle">2</text>
+      <text x="24" y="66" font-size="16" font-weight="600" fill="#ececec">Noise filter</text>
+    </g>
+    <g transform="translate(508,140)">
+      <rect width="196" height="90" rx="12" fill="#26262b" stroke="#33333a"/>
+      <circle cx="30" cy="30" r="16" fill="#fb923c"/><text x="30" y="35" font-size="15" font-weight="800" fill="#141417" text-anchor="middle">3</text>
+      <text x="24" y="66" font-size="16" font-weight="600" fill="#ececec">Split blocks</text>
+    </g>
+    <g transform="translate(732,140)">
+      <rect width="196" height="90" rx="12" fill="#26262b" stroke="#33333a"/>
+      <circle cx="30" cy="30" r="16" fill="#fb923c"/><text x="30" y="35" font-size="15" font-weight="800" fill="#141417" text-anchor="middle">4</text>
+      <text x="24" y="66" font-size="16" font-weight="600" fill="#ececec">Deduplicate</text>
+    </g>
+    <g transform="translate(956,140)">
+      <rect width="196" height="90" rx="12" fill="#26262b" stroke="#33333a"/>
+      <circle cx="30" cy="30" r="16" fill="#fb923c"/><text x="30" y="35" font-size="15" font-weight="800" fill="#141417" text-anchor="middle">5</text>
+      <text x="24" y="66" font-size="16" font-weight="600" fill="#ececec">Decisions</text>
+    </g>
+    <!-- row 2 -->
+    <g transform="translate(60,300)">
+      <rect width="196" height="90" rx="12" fill="#26262b" stroke="#33333a"/>
+      <circle cx="30" cy="30" r="16" fill="#fb923c"/><text x="30" y="35" font-size="15" font-weight="800" fill="#141417" text-anchor="middle">6</text>
+      <text x="24" y="60" font-size="16" font-weight="600" fill="#ececec">Acceptance</text>
+      <text x="24" y="80" font-size="16" font-weight="600" fill="#ececec">criteria</text>
+    </g>
+    <g transform="translate(284,300)">
+      <rect width="196" height="90" rx="12" fill="#26262b" stroke="#33333a"/>
+      <circle cx="30" cy="30" r="16" fill="#fb923c"/><text x="30" y="35" font-size="15" font-weight="800" fill="#141417" text-anchor="middle">7</text>
+      <text x="24" y="66" font-size="16" font-weight="600" fill="#ececec">TODOs</text>
+    </g>
+    <g transform="translate(508,300)">
+      <rect width="196" height="90" rx="12" fill="#26262b" stroke="#33333a"/>
+      <circle cx="30" cy="30" r="16" fill="#fb923c"/><text x="30" y="35" font-size="15" font-weight="800" fill="#141417" text-anchor="middle">8</text>
+      <text x="24" y="66" font-size="16" font-weight="600" fill="#ececec">Risks &amp; deps</text>
+    </g>
+    <g transform="translate(732,300)">
+      <rect width="196" height="90" rx="12" fill="#26262b" stroke="#33333a"/>
+      <circle cx="30" cy="30" r="16" fill="#fb923c"/><text x="30" y="35" font-size="15" font-weight="800" fill="#141417" text-anchor="middle">9</text>
+      <text x="24" y="66" font-size="16" font-weight="600" fill="#ececec">Rank + drop</text>
+    </g>
+    <g transform="translate(956,300)">
+      <rect width="196" height="90" rx="12" fill="#3a2416" stroke="#fb923c"/>
+      <circle cx="30" cy="30" r="16" fill="#fb923c"/><text x="30" y="35" font-size="15" font-weight="800" fill="#141417" text-anchor="middle">10</text>
+      <text x="24" y="66" font-size="16" font-weight="700" fill="#fdba74">Assemble CIR</text>
+    </g>
+  </g>
+
+  <!-- connectors within rows -->
+  <g stroke="#fb923c" stroke-width="3" fill="none" stroke-linecap="round">
+    <path d="M262 185 h16 M270 179 l8 6 l-8 6"/>
+    <path d="M486 185 h16 M494 179 l8 6 l-8 6"/>
+    <path d="M710 185 h16 M718 179 l8 6 l-8 6"/>
+    <path d="M934 185 h16 M942 179 l8 6 l-8 6"/>
+    <path d="M262 345 h16 M270 339 l8 6 l-8 6"/>
+    <path d="M486 345 h16 M494 339 l8 6 l-8 6"/>
+    <path d="M710 345 h16 M718 339 l8 6 l-8 6"/>
+    <path d="M934 345 h16 M942 339 l8 6 l-8 6"/>
+  </g>
+</svg>

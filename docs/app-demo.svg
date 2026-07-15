@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <rect width="1200" height="720" rx="16" fill="#0f0f12"/>
+
+  <!-- browser chrome -->
+  <rect x="0" y="0" width="1200" height="52" rx="16" fill="#26262b"/>
+  <rect x="0" y="30" width="1200" height="22" fill="#26262b"/>
+  <circle cx="30" cy="26" r="6" fill="#ff5f57"/>
+  <circle cx="52" cy="26" r="6" fill="#febc2e"/>
+  <circle cx="74" cy="26" r="6" fill="#28c840"/>
+  <rect x="120" y="13" width="700" height="26" rx="13" fill="#17171a"/>
+  <text x="140" y="31" font-size="14" fill="#9a9aa2">🔒  vishalmysore.github.io/crunchyTheGreat/</text>
+
+  <!-- app body -->
+  <rect x="0" y="52" width="1200" height="668" fill="#17171a"/>
+
+  <!-- masthead -->
+  <text x="40" y="98" font-size="26" font-weight="800" fill="#ffffff">Crunchy<tspan fill="#fb923c">The</tspan>Great</text>
+  <text x="40" y="124" font-size="14" fill="#9a9aa2">Deterministic Jira context compression for AI coding agents. Runs entirely in your browser.</text>
+
+  <!-- controls -->
+  <g font-size="13">
+    <rect x="40" y="146" width="130" height="34" rx="7" fill="#1f1f23" stroke="#33333a"/>
+    <text x="54" y="168" fill="#ececec">Jira issue JSON ▾</text>
+    <rect x="182" y="146" width="96" height="34" rx="7" fill="#1f1f23" stroke="#33333a"/>
+    <text x="196" y="168" fill="#ececec">Tiny ▾</text>
+    <rect x="290" y="146" width="120" height="34" rx="7" fill="#1f1f23" stroke="#33333a"/>
+    <text x="304" y="168" fill="#ececec">Markdown ▾</text>
+    <rect x="960" y="146" width="104" height="34" rx="7" fill="#1f1f23" stroke="#33333a"/>
+    <text x="1012" y="168" fill="#ececec" text-anchor="middle">Load sample</text>
+    <rect x="1074" y="146" width="86" height="34" rx="7" fill="#f97316"/>
+    <text x="1117" y="168" fill="#ffffff" font-weight="700" text-anchor="middle">Compress ▸</text>
+  </g>
+
+  <!-- left pane: input -->
+  <rect x="40" y="198" width="550" height="486" rx="10" fill="#1f1f23" stroke="#33333a"/>
+  <rect x="40" y="198" width="550" height="34" rx="10" fill="#26262b"/>
+  <rect x="40" y="216" width="550" height="16" fill="#26262b"/>
+  <text x="58" y="220" font-size="13" font-weight="700" fill="#ececec">Input</text>
+  <text x="572" y="220" font-size="12" fill="#9a9aa2" text-anchor="end">5,897 chars · ~1,474 tok</text>
+  <g font-family="ui-monospace, Consolas, monospace" font-size="12.5" fill="#8a8a92">
+    <text x="58" y="258">{ "key": "PAY-1421",</text>
+    <text x="58" y="280">  "summary": "Async payment notification service",</text>
+    <text x="58" y="302">  "description": "&lt;p&gt;We need a webhook so that ...",</text>
+    <text x="58" y="324">  "comments": [</text>
+    <text x="74" y="346" fill="#6b6b64">    { "author": "Jenkins CI", "body": "Build #4712 …" },</text>
+    <text x="74" y="368">    { "author": "Miguel", "body": "Let's use Kafka." },</text>
+    <text x="74" y="390" fill="#6b6b64">    { "author": "Priya", "body": "Agree. Let's use Kafka." },</text>
+    <text x="74" y="412">    { "author": "Tom", "body": "Rejected RabbitMQ … Redis" },</text>
+    <text x="74" y="434" fill="#6b6b64">    { "author": "Dana", "body": "SocketTimeout… at okhttp3" },</text>
+    <text x="74" y="456" fill="#6b6b64">    { "author": "Miguel", "body": "+1" },</text>
+    <text x="74" y="478">    { "author": "Tom", "body": "TODO: egress allowlist" },</text>
+    <text x="74" y="500" fill="#6b6b64">    { "author": "Automation", "body": "Branch created" },</text>
+    <text x="74" y="522" fill="#6b6b64">    { "author": "Miguel", "body": "Thanks!" } ] }</text>
+  </g>
+  <text x="58" y="566" font-size="12" fill="#6b6b64">…12 comments · HTML · a 1.8 KB stack trace · 3 duplicates · bots</text>
+
+  <!-- right pane: output -->
+  <rect x="610" y="198" width="550" height="486" rx="10" fill="#1f1f23" stroke="#33333a"/>
+  <rect x="610" y="198" width="550" height="34" rx="10" fill="#26262b"/>
+  <rect x="610" y="216" width="550" height="16" fill="#26262b"/>
+  <text x="628" y="220" font-size="13" font-weight="700" fill="#ececec">Compressed context</text>
+  <text x="1142" y="220" font-size="12" fill="#9a9aa2" text-anchor="end">Copy</text>
+
+  <!-- stat cards -->
+  <g>
+    <rect x="628" y="246" width="118" height="52" rx="8" fill="#26262b"/>
+    <text x="640" y="276" font-size="20" font-weight="800" fill="#fb923c">74%</text>
+    <text x="640" y="291" font-size="10" fill="#9a9aa2">REDUCTION</text>
+    <rect x="756" y="246" width="140" height="52" rx="8" fill="#26262b"/>
+    <text x="768" y="276" font-size="18" font-weight="800" fill="#ececec">1,474→384</text>
+    <text x="768" y="291" font-size="10" fill="#9a9aa2">TOKENS</text>
+    <rect x="906" y="246" width="104" height="52" rx="8" fill="#26262b"/>
+    <text x="918" y="276" font-size="18" font-weight="800" fill="#ececec">0.95</text>
+    <text x="918" y="291" font-size="10" fill="#9a9aa2">CONFIDENCE</text>
+    <rect x="1020" y="246" width="90" height="52" rx="8" fill="#26262b"/>
+    <text x="1032" y="276" font-size="18" font-weight="800" fill="#ececec">6 ms</text>
+    <text x="1032" y="291" font-size="10" fill="#9a9aa2">TIME</text>
+  </g>
+
+  <!-- markdown output -->
+  <g font-family="ui-monospace, Consolas, monospace" font-size="12.5">
+    <text x="628" y="332" fill="#ececec" font-weight="700"># PAY-1421 Async payment notification service</text>
+    <text x="628" y="360" fill="#fb923c" font-weight="700">## Decisions</text>
+    <text x="628" y="380" fill="#c9c9cf">- For the event backbone, let's use Kafka.</text>
+    <text x="628" y="399" fill="#c9c9cf">- Rejected RabbitMQ; we already operate Kafka.</text>
+    <text x="628" y="418" fill="#c9c9cf">- Use Redis for the delivery-attempt cache.</text>
+    <text x="628" y="446" fill="#fb923c" font-weight="700">## Acceptance Criteria</text>
+    <text x="628" y="466" fill="#c9c9cf">- Webhook within 5s of a payment state change</text>
+    <text x="628" y="485" fill="#c9c9cf">- Retries w/ backoff up to 24h; HMAC-SHA256 signed</text>
+    <text x="628" y="513" fill="#fb923c" font-weight="700">## Risks &amp; Dependencies</text>
+    <text x="628" y="533" fill="#c9c9cf">- Retry-storm performance risk on the egress proxy</text>
+    <text x="628" y="552" fill="#c9c9cf">- Blocked by PLAT-77 (service-mesh mTLS upgrade)</text>
+    <text x="628" y="580" fill="#fb923c" font-weight="700">## Ignored Content</text>
+    <text x="628" y="600" fill="#6b6b64">- 1.8KB log dump · 2 bots · 3 greetings · 1 duplicate</text>
+  </g>
+  <text x="628" y="648" font-size="12" fill="#6b6b64">confidence: 0.95 | compression: 74%</text>
+</svg>
