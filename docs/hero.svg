@@ -18,7 +18,7 @@
 
   <!-- headline -->
   <text x="60" y="168" font-size="52" font-weight="800" fill="#ffffff">Compress messy Jira tickets</text>
-  <text x="60" y="228" font-size="52" font-weight="800" fill="#ffffff"><tspan fill="#fb923c">60% smaller</tspan> before your AI agent</text>
+  <text x="60" y="228" font-size="52" font-weight="800" fill="#ffffff"><tspan fill="#fb923c">86% smaller</tspan> before your AI agent</text>
   <text x="60" y="288" font-size="52" font-weight="800" fill="#ffffff">ever reads them.</text>
 
   <!-- RAW card -->
@@ -40,7 +40,7 @@
     <rect x="360" y="474" width="88" height="26" rx="13" fill="#3a2416"/>
     <text x="404" y="491" fill="#fb923c" text-anchor="middle">greeting ✕</text>
   </g>
-  <text x="84" y="532" font-size="14" fill="#9a9aa2">12 comments · mostly noise</text>
+  <text x="84" y="532" font-size="14" fill="#9a9aa2">KAFKA-9366 · 33 comments · 2,895 tokens</text>
 
   <!-- arrow -->
   <circle cx="545" cy="445" r="30" fill="url(#accent)"/>
@@ -56,7 +56,7 @@
     <text x="614" y="488"><tspan fill="#9a9aa2" font-weight="700">–</tspan>  <tspan fill="#9a9aa2">bots, dupes, logs stripped</tspan></text>
   </g>
   <circle cx="1058" cy="410" r="54" fill="#3a2416" stroke="#fb923c" stroke-width="4"/>
-  <text x="1058" y="408" font-size="32" font-weight="800" fill="#fb923c" text-anchor="middle">60%</text>
+  <text x="1058" y="408" font-size="32" font-weight="800" fill="#fb923c" text-anchor="middle">86%</text>
   <text x="1058" y="432" font-size="13" fill="#fdba74" text-anchor="middle">smaller</text>
 
   <!-- footer strip -->
