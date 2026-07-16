@@ -1,5 +1,6 @@
 :root {
-  --bg: #f7f7f5;
+  /* Pure white so the logo's baked-in white background blends seamlessly. */
+  --bg: #ffffff;
   --surface: #ffffff;
   --surface-2: #f0f0ec;
   --border: #e2e2dc;
@@ -44,19 +45,23 @@ body {
   padding: 2rem 1.25rem 3rem;
 }
 
+.masthead {
+  text-align: center;
+}
 .masthead h1.brand {
   margin: 0 0 0.15rem;
   line-height: 0;
 }
-/* The logo is a JPEG with a baked-in white background, so rather than let it
-   sit as a bright slab in dark mode, it gets an explicit white card. */
+/* The logo is a JPEG with a baked-in white background. On the white page it
+   blends seamlessly; in dark mode it keeps an explicit white card so it reads
+   as deliberate rather than as a stray bright slab. */
 .masthead h1.brand img {
   width: min(330px, 82%);
   height: auto;
   aspect-ratio: 1024 / 559;
   border-radius: 12px;
   background: #fff;
-  display: block;
+  display: inline-block;
 }
 @media (prefers-color-scheme: dark) {
   .masthead h1.brand img {
@@ -64,7 +69,7 @@ body {
   }
 }
 .tagline {
-  margin: 0.35rem 0 0;
+  margin: 0.35rem auto 0;
   color: var(--muted);
   max-width: 60ch;
 }
